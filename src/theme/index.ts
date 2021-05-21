@@ -21,14 +21,19 @@ const theme = createMuiTheme({
     },
     primary: {
       main: "#22BF13",
+      // contrastText: colors.grey[900],
     },
     secondary: {
       main: "#3F4E59",
+      // contrastText: "#fff",
     },
-    text: {
-      primary: colors.blueGrey[900],
-      secondary: "#FFFFFF",
-    },
+    // text: {
+    // primary: "#FFFFFF",
+    // secondary: colors.blueGrey[900],
+    // primary: colors.blueGrey[900],
+    // secondary: colors.grey[900],
+    // secondary: "#FFFFFF",
+    // },
   },
   typography: {
     fontFamily: "Montserrat, sans-serif",

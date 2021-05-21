@@ -1,38 +1,11 @@
-import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Fair from "./pages/fair";
-import Landing from "./pages/landing.page";
+import Home from "./pages/Home";
 
 const routes = [
   {
     path: "/",
-    exact: true,
-    component: Landing,
+    component: Home,
   },
-  {
-    path: "/login",
-    exact: true,
-    component: Landing,
-  },
-  {
-    path: "/feira",
-    exact: true,
-    component: Fair,
-  },
-  // {
-  //   path: "/feira",
-  //   component: "",
-  //   routes: [
-  //     {
-  //       path: "/tacos/bus",
-  //       component: Bus
-  //     },
-  //     {
-  //       path: "/tacos/cart",
-  //       component: Cart
-  //     }
-  //   ]
-  // }
 ];
 
 export default function Routes() {

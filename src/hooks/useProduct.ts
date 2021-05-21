@@ -12,7 +12,7 @@ export interface IProduct extends IProductCreate {
   description?: string;
 }
 
-const useProducts = () => {
+const useProduct = () => {
   const getAll = async (fairId: string) => {
     const { data, status } = await api.get(`/product/${fairId}`);
 
@@ -25,4 +25,4 @@ const useProducts = () => {
   return { getAll };
 };
 
-export { useProducts };
+export { useProduct };

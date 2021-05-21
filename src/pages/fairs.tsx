@@ -1,14 +1,14 @@
 import { Box, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import FairComponent from "../components/fair.component";
-import { IFair, useFairs } from "../hooks/useFairs";
+import FairListComponent from "../components/FairList.component";
+import { IFair, useFair } from "../hooks/useFair";
 import { FairsGridContainer, useFairsStyle } from "../styles/fairs/fairs.style";
 
 const Fairs: React.FC = () => {
   const [fairs, setFairs] = useState<IFair[]>([]);
   const { push } = useHistory();
-  const { getAll } = useFairs();
+  const { getAll } = useFair();
   const { fairsMainContainer } = useFairsStyle();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Fairs: React.FC = () => {
 
   return (
     <Box className={fairsMainContainer}>
-      <Typography variant="h3" align="center" color="textSecondary">
+      <Typography variant="h3" align="center" color="textPrimary">
         Nossas parceiras
       </Typography>
       <FairsGridContainer>
@@ -37,7 +37,7 @@ const Fairs: React.FC = () => {
           fairs.length > 0 &&
           fairs.map((fair) => {
             return (
-              <FairComponent
+              <FairListComponent
                 onFairSelected={handleFairSelected}
                 key={fair.id}
                 fair={fair}

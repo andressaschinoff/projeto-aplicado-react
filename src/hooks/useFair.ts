@@ -2,7 +2,7 @@ import { api } from "../services/api";
 
 export interface IFairCreate {
   name: string;
-  zipcode: number;
+  zipcode: string;
   address: string;
   opening: string;
   closing: string;
@@ -17,7 +17,7 @@ export interface IFair extends IFairCreate {
   moneySign?: number;
 }
 
-const useFairs = () => {
+const useFair = () => {
   const getAll = async () => {
     const { data, status } = await api.get("/fair");
 
@@ -30,4 +30,4 @@ const useFairs = () => {
   return { getAll };
 };
 
-export { useFairs };
+export { useFair };

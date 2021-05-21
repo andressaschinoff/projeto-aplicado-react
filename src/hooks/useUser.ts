@@ -1,25 +1,31 @@
 import { api } from "../services/api";
+import { IFullAddress } from "./useFullAddress";
 import { ITroller } from "./useTroller";
 
-export interface IClienteCreate {
-  name: string;
+export interface IUserCreate {
   cpf: string;
   email: string;
+  name: string;
   password?: string;
+  role: string;
   telephone: string;
+  zipcode?: string;
+  address?: string;
 }
 
-export interface ICliente extends IClienteCreate {
+export interface IUser extends IUserCreate {
   id: string;
-  trollers?: ITroller;
+  trollers?: ITroller[];
+  fair?: ITroller;
+  fullAddress?: IFullAddress;
 }
 
-const useProducts = () => {
+const useUser = () => {
   const getAll = async (fairId: string) => {
     const { data, status } = await api.get(`/product/${fairId}`);
 
     return { data, status } as {
-      data: ICliente[];
+      data: IUser[];
       status: number;
     };
   };
@@ -27,4 +33,4 @@ const useProducts = () => {
   return { getAll };
 };
 
-export { useProducts };
+export { useUser };

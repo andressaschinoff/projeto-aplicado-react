@@ -21,7 +21,6 @@ function MenuDrawer(props: Props) {
       !!troller && !!troller.products
         ? troller.products?.reduce((acc, curr) => acc + curr.quantity, 0)
         : 0;
-    console.log(quantity);
     setQuantities(quantity);
   }, [troller]);
 

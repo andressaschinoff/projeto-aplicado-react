@@ -1,10 +1,10 @@
 import api from "../services/api";
-import { ICliente } from "./useClient";
+import { IUser } from "./useUser";
 import { IProduct } from "./useProduct";
 
 export interface ITrollerCreate {
   products?: IProducts[];
-  client?: ICliente;
+  client?: IUser;
 }
 
 export interface IProducts {

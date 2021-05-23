@@ -1,4 +1,4 @@
-import { Link, BrowserRouter as Router } from "react-router-dom";
+import { Link as RouterLink, BrowserRouter as Router } from "react-router-dom";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import {
@@ -28,44 +28,41 @@ export function MenuItems() {
       <MenuItemsHeader>
         <MenuItemsOptions className="menu-options">
           <li>
-            <Button color="inherit">
-              <Link to="/" className={linkDefault}>
-                <Typography id="text" variant="subtitle1">
-                  Home
-                </Typography>
-              </Link>
+            <Button component={RouterLink} to="/" color="inherit">
+              <Typography id="text" variant="subtitle1">
+                Home
+              </Typography>
             </Button>
           </li>
           <li>
-            <Button color="inherit">
-              <Link to="/login" className={linkDefault}>
-                <Typography id="text" variant="subtitle1">
-                  {/* {signed && person?.isActive ? "Perfil" : "Login"} */}
-                  Login
-                </Typography>
-              </Link>
+            <Button component={RouterLink} to="/login" color="inherit">
+              <Typography id="text" variant="subtitle1">
+                {/* {signed && person?.isActive ? "Perfil" : "Login"} */}
+                Login
+              </Typography>
             </Button>
           </li>
           <li>
-            <Button color="inherit">
-              <Link to="/registrar" className={linkDefault}>
-                <Typography id="text" variant="subtitle1">
-                  Registrar
-                </Typography>
-              </Link>
+            <Button component={RouterLink} to="/registrar" color="inherit">
+              <Typography id="text" variant="subtitle1">
+                Registrar
+              </Typography>
             </Button>
           </li>
           <li>
-            <Button variant="outlined" color="primary">
-              <Link to="/registrar-feira" className={linkOutline}>
-                <Typography id="text" variant="subtitle1">
-                  Cadastrar Feira?
-                </Typography>
-              </Link>
+            <Button
+              component={RouterLink}
+              to="/cadastrar-feira"
+              variant="outlined"
+              color="primary"
+            >
+              <Typography id="text" variant="subtitle1">
+                Cadastrar Feira?
+              </Typography>
             </Button>
           </li>
         </MenuItemsOptions>
-        <IconButton color="primary">
+        <IconButton component={RouterLink} to="/carrinho" color="primary">
           <ShoppingCartIcon fontSize="large" color="primary" />
           {quantities > 0 && (
             <Typography variant="body2" color="error">

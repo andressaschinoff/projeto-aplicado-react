@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Container, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FairListComponent from "../components/FairList.component";
@@ -28,24 +28,26 @@ const Fairs: React.FC = () => {
   };
 
   return (
-    <Box className={fairsMainContainer}>
-      <Typography variant="h3" align="center" color="textPrimary">
-        Nossas parceiras
-      </Typography>
-      <FairsGridContainer>
-        {!!fairs &&
-          fairs.length > 0 &&
-          fairs.map((fair) => {
-            return (
-              <FairListComponent
-                onFairSelected={handleFairSelected}
-                key={fair.id}
-                fair={fair}
-              />
-            );
-          })}
-      </FairsGridContainer>
-    </Box>
+    <Container maxWidth="lg">
+      <Box className={fairsMainContainer}>
+        <Typography variant="h3" align="center" color="textPrimary">
+          Nossas parceiras
+        </Typography>
+        <FairsGridContainer>
+          {!!fairs &&
+            fairs.length > 0 &&
+            fairs.map((fair) => {
+              return (
+                <FairListComponent
+                  onFairSelected={handleFairSelected}
+                  key={fair.id}
+                  fair={fair}
+                />
+              );
+            })}
+        </FairsGridContainer>
+      </Box>
+    </Container>
   );
 };
 

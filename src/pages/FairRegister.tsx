@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
@@ -6,69 +6,54 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { Box, Button, Container, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormGroup,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 
-import { IFairError, IFairHelperText } from "../helpers/interfaces";
+import {
+  IAddressFunctions,
+  IFairHelpers,
+  IFairState,
+  IFairError,
+} from "../helpers/interfaces";
+import {
+  defaultFairStates,
+  defaultFairHelpers,
+  defaultFairErros,
+  weekdays,
+} from "../helpers/defaults";
 
 import {
   FormContainer,
   PasswordContainer,
   useRegisterStyle,
 } from "../styles/register.style";
-
 import { useMainStyle } from "../styles/main.style";
-import { IFairCreate } from "../hooks/useFair";
+
+import AddressComponent from "../components/Address.component";
+import LoadingContext from "../hooks/LoadingContext";
+import { useTypes } from "../hooks/useTypes";
 
 export function FairRegister() {
-  const { mainContainer } = useRegisterStyle();
-  const { secondaryText } = useMainStyle();
-  const [states, setStates] = useState<IFairCreate>({
-    name: "",
-    zipcode: "",
-    address: "",
-    opening: "",
-    closing: "",
-    weekDay: "",
-    deliveryPrice: 0,
-    types: [],
-  });
-  const [helperTexts, setHelperTexts] = useState<IFairHelperText>({
-    name: "",
-    zipcode: "",
-    address: "",
-    addressNumber: "",
-    opening: "",
-    closing: "",
-    weekDay: "",
-    deliveryPrice: "",
-    types: "",
-  });
-  const [errors, setErrors] = useState<IFairError>({
-    name: false,
-    zipcode: false,
-    address: false,
-    addressNumber: false,
-    opening: false,
-    closing: false,
-    weekDay: false,
-    deliveryPrice: false,
-    types: false,
-  });
+  const addressRef = useRef<IAddressFunctions>(null);
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
+  const { types } = useTypes();
+  const classes = useRegisterStyle();
+  const mainClasses = useMainStyle();
+  const [states, setStates] = useState<IFairState>(defaultFairStates);
+  const [helperTexts, setHelperTexts] =
+    useState<IFairHelpers>(defaultFairHelpers);
+  const [errors, setErrors] = useState<IFairError>(defaultFairErros);
   type StateType = keyof typeof states;
 
-  useEffect(() => {
-    // effect
-    return () => {
-      // cleanup
-    };
-  }, [errors, helperTexts, states]);
-
   const handleChange =
-    (prop: keyof IFairCreate) =>
+    (prop: keyof IFairState) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target as HTMLInputElement;
       setStates({ ...states, [prop]: value });
@@ -76,36 +61,50 @@ export function FairRegister() {
       setErrors({ ...errors, [prop]: false });
     };
 
-  const handleClickShowPassword = (prop: keyof IFairCreate) => () => {
-    const value = !states[prop];
-    setStates({ ...states, [prop]: value });
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = event.target;
+    const currentWeekdays = states.weekdays;
+    const newWeekdays = currentWeekdays.includes(name)
+      ? currentWeekdays.filter((s) => s !== name)
+      : [...currentWeekdays, name];
+
+    setStates({ ...states, weekdays: [...newWeekdays] });
   };
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  // const handleSelectedFairChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const { value } = event.target as HTMLInputElement;
+  //   const fairSelected = fairs?.filter(({ name }) => name === value)[0];
+  //   setStates({ ...states, fair: fairSelected });
+  // };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const hasAddressError = addressRef.current?.checkAddressErrors();
     const hasError = checkErrors();
-    if (hasError) {
+    if (hasError || hasAddressError) {
       return;
     }
-    if (states.types.length === 0) {
-      setErrors({
-        ...errors,
-        types: true,
-      });
-      setHelperTexts({
-        ...helperTexts,
-        types: "Você precisa selecionar pelo menos um tipo de produto.",
-      });
-      return;
-    }
-    console.log("persiste");
-    console.log(states);
+
+    const formatterAddress = addressRef.current?.getAddressInfo();
+
+    // const person: IUserCreate = {
+    //   cpf: states.cpf,
+    //   email: states.email,
+    //   name: states.name,
+    //   password: states.password,
+    //   role: states.role,
+    //   telephone: states.telephone,
+    //   address: formatterAddress?.address,
+    //   zipcode: formatterAddress?.zipcode,
+    // };
+    // console.log("persiste");
+    // console.log(person);
+    // addressRef.current?.clearAddressInfo();
+    // cpfRef.current?.clearCpf();
+    // celphoneRef.current?.clearCelphone();
+    // setStates(defaultUserRegister);
   };
 
   const checkErrors = () => {
@@ -114,13 +113,16 @@ export function FairRegister() {
     let hasError = false;
     Object.keys(states).forEach((key) => {
       const value = states[key as StateType];
-      if (!value && typeof value === "string") {
-        newErrors = { ...newErrors, [key]: true };
-        newHelpers = {
-          ...newHelpers,
-          [key]: "Campo obrigatório.",
-        };
-        hasError = true;
+      if (typeof value === "string") {
+        const cleanValue = value.replace(/[-.()]/g, "").trim();
+        if (!cleanValue) {
+          newErrors = { ...newErrors, [key]: true };
+          newHelpers = {
+            ...newHelpers,
+            [key]: "Campo obrigatório.",
+          };
+          hasError = true;
+        }
       }
     });
     setErrors(newErrors);
@@ -129,191 +131,136 @@ export function FairRegister() {
   };
 
   return (
-    // <Container className={mainContainer} maxWidth="sm">
-    //   <FormContainer onSubmit={handleSubmit}>
-    //     <FormControl
-    //       fullWidth
-    //       error={errors.name}
-    //       // className={clsx(classes.margin, classes.textField)}
-    //       variant="outlined"
-    //     >
-    //       <FormLabel id="fair-name-register" component="legend">
-    //         Nome da feira
-    //       </FormLabel>
-    //       <fair-outlinedInput
-    //         id="fair-name-register"
-    //         value={states.name}
-    //         onChange={handleChange("name")}
-    //         aria-describedby="fair-name-register"
-    //         inputProps={{
-    //           "aria-label": "name",
-    //         }}
-    //         labelWidth={0}
-    //       />
-    //       <FormHelperText>{helperTexts.name}</FormHelperText>
-    //     </FormControl>
-    //     <FormControl
-    //       fullWidth
-    //       error={errors.zipcode}
-    //       // className={clsx(classes.margin, classes.textField)}
-    //       variant="outlined"
-    //     >
-    //       <FormLabel id="fair-zipcode-register" component="legend">
-    //         CEP
-    //       </FormLabel>
-    //       <fair-outlinedInput
-    //         id="fair-outlined-adornment-zipcode"
-    //         value={states.zipcode}
-    //         onChange={handleChange("zipcode")}
-    //         aria-describedby="fair-zipcode-register"
-    //         inputProps={{
-    //           "aria-label": "zipcode",
-    //         }}
-    //         labelWidth={0}
-    //       />
-    //       <FormHelperText>{helperTexts.zipcode}</FormHelperText>
-    //     </FormControl>
-    //     <FormControl
-    //       fullWidth
-    //       error={errors.email}
-    //       // className={clsx(classes.margin, classes.textField)}
-    //       variant="outlined"
-    //     >
-    //       <FormLabel id="fair-email-register" component="legend">
-    //         Email
-    //       </FormLabel>
-    //       <fair-outlinedInput
-    //         id="fair-outlined-adornment-email"
-    //         value={states.email}
-    //         onChange={handleChange("email")}
-    //         aria-describedby="fair-email-register"
-    //         inputProps={{
-    //           "aria-label": "email",
-    //         }}
-    //         labelWidth={0}
-    //       />
-    //       <FormHelperText>{helperTexts.email}</FormHelperText>
-    //     </FormControl>
-    //     <Box>
-    //       <FormControl
-    //         fullWidth
-    //         error={errors.password}
-    //         // className={clsx(classes.margin, classes.textField)}
-    //         variant="outlined"
-    //       >
-    //         <FormLabel id="fair-outlined-adornment-password" component="legend">
-    //           Senha
-    //         </FormLabel>
-    //         <fair-outlinedInput
-    //           id="fair-outlined-adornment-password"
-    //           type={states.showPassword ? "text" : "password"}
-    //           value={states.password}
-    //           onChange={handleChange("password")}
-    //           endAdornment={
-    //             <InputAdornment component="i" position="end">
-    //               <IconButton
-    //                 aria-label="toggle password visibility"
-    //                 onClick={handleClickShowPassword("showPassword")}
-    //                 onMouseDown={handleMouseDownPassword}
-    //                 // edge="end"
-    //               >
-    //                 {states.showPassword ? <Visibility /> : <VisibilityOff />}
-    //               </IconButton>
-    //             </InputAdornment>
-    //           }
-    //           labelWidth={0}
-    //         />
-    //         <FormHelperText>{helperTexts.password}</FormHelperText>
-    //       </FormControl>
-    //       <FormControl
-    //         fullWidth
-    //         error={errors.reapeatPassword}
-    //         // className={clsx(classes.margin, classes.textField)}
-    //         variant="outlined"
-    //       >
-    //         <FormLabel
-    //           id="fair-outlined-adornment-repeat-password"
-    //           component="legend"
-    //         >
-    //           Confirme a senha
-    //         </FormLabel>
-    //         <fair-outlinedInput
-    //           id="fair-outlined-adornment-password"
-    //           type={states.showReapeatPassword ? "text" : "password"}
-    //           value={states.reapeatPassword}
-    //           onChange={handleChange("reapeatPassword")}
-    //           endAdornment={
-    //             <InputAdornment component="i" position="end">
-    //               <IconButton
-    //                 aria-label="toggle password visibility"
-    //                 onClick={handleClickShowPassword("showReapeatPassword")}
-    //                 onMouseDown={handleMouseDownPassword}
-    //                 // edge="end"
-    //               >
-    //                 {states.showReapeatPassword ? (
-    //                   <Visibility />
-    //                 ) : (
-    //                   <VisibilityOff />
-    //                 )}
-    //               </IconButton>
-    //             </InputAdornment>
-    //           }
-    //           labelWidth={0}
-    //         />
-    //         <FormHelperText>{helperTexts.reapeatPassword}</FormHelperText>
-    //       </FormControl>
-    //     </Box>
-    //     <FormControl
-    //       fullWidth
-    //       // className={clsx(classes.margin, classes.textField)}
-    //       error={errors.telephone}
-    //       variant="outlined"
-    //     >
-    //       <FormLabel id="fair-outlined-adornment-telephone" component="legend">
-    //         Telefone
-    //       </FormLabel>
-    //       <fair-outlinedInput
-    //         id="fair-outlined-adornment-telephone"
-    //         value={states.telephone}
-    //         onChange={handleChange("telephone")}
-    //         labelWidth={0}
-    //         // label="Telefone"
-    //       />
-    //       <FormHelperText>{helperTexts.telephone}</FormHelperText>
-    //     </FormControl>
-    //     <FormControl
-    //       component="fieldset"
-    //       error={errors.role}
-    //       // className={classes.formControl}
-    //     >
-    //       <FormLabel component="legend">Quem você é?</FormLabel>
-    //       <RadioGroup
-    //         aria-label="roleAnwser"
-    //         name="roleAnwser"
-    //         value={states.role}
-    //         onChange={handleChange("role")}
-    //       >
-    //         <FormControlLabel
-    //           value="client"
-    //           control={<Radio color="primary" />}
-    //           label="Comprador"
-    //         />
-    //         <FormControlLabel
-    //           value="fair"
-    //           control={<Radio color="primary" />}
-    //           label="Feirante"
-    //         />
-    //       </RadioGroup>
-    //       <FormHelperText>{helperTexts.role}</FormHelperText>
-    //     </FormControl>
-    //     <Button type="submit" variant="contained" color="primary">
-    //       <Typography className={secondaryText} variant="body1">
-    //         Cadastrar
-    //       </Typography>
-    //     </Button>
-    //   </FormContainer>
-    // </Container>
-    <Box />
+    <Container className={classes.mainContainer} maxWidth="md">
+      <FormContainer onSubmit={handleSubmit}>
+        <FormControl fullWidth error={errors.name} variant="outlined">
+          <FormLabel id="user-name-register" component="legend">
+            Nome
+          </FormLabel>
+          <OutlinedInput
+            id="user-name-register"
+            value={states.name}
+            autoFocus
+            onChange={handleChange("name")}
+            aria-describedby="user-name-register"
+            inputProps={{
+              "aria-label": "name",
+            }}
+            labelWidth={0}
+          />
+          <FormHelperText>{helperTexts.name}</FormHelperText>
+        </FormControl>
+        <AddressComponent ref={addressRef} mustHasAddress={true} />
+        <Box className={mainClasses.flexBox}>
+          <FormControl fullWidth error={errors.opening} variant="outlined">
+            <FormLabel id="user-opening-register" component="legend">
+              Abertura
+            </FormLabel>
+            <OutlinedInput
+              id="time-opening"
+              type="time"
+              value={states.opening}
+              className={classes.textField}
+              onChange={handleChange("opening")}
+              aria-describedby="user-opening-register"
+              labelWidth={0}
+              inputProps={{
+                step: 300, // 5 min
+                "aria-label": "opening",
+              }}
+            />
+            <FormHelperText>{helperTexts.opening}</FormHelperText>
+          </FormControl>
+          <FormControl fullWidth error={errors.closing} variant="outlined">
+            <FormLabel id="user-opening-register" component="legend">
+              Enceramento
+            </FormLabel>
+            <OutlinedInput
+              id="time-closing"
+              type="time"
+              value={states.closing}
+              className={classes.textField}
+              onChange={handleChange("closing")}
+              aria-describedby="user-closing-register"
+              labelWidth={0}
+              inputProps={{
+                step: 300, // 5 min
+                "aria-label": "opening",
+              }}
+            />
+            <FormHelperText>{helperTexts.closing}</FormHelperText>
+          </FormControl>
+        </Box>
+        <Box className={mainClasses.flexBox}>
+          <FormControl fullWidth error={errors.weekdays}>
+            <FormLabel id="user-opening-register" component="legend">
+              Dias abertos
+            </FormLabel>
+            <FormGroup className={classes.checkbox}>
+              {weekdays.map((day) => {
+                return (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={states.weekdays.includes(day)}
+                        onChange={handleCheckboxChange}
+                        name={day}
+                      />
+                    }
+                    label={day}
+                  />
+                );
+              })}
+            </FormGroup>
+            <FormHelperText>{helperTexts.weekdays}</FormHelperText>
+          </FormControl>
+          <FormControl fullWidth error={errors.types}>
+            <FormLabel id="user-opening-register" component="legend">
+              Tipos de mercadoria
+            </FormLabel>
+            <FormGroup className={classes.checkbox}>
+              {types.map((type) => {
+                return (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={states.types.includes(type)}
+                        onChange={handleCheckboxChange}
+                        name={type}
+                      />
+                    }
+                    label={type}
+                  />
+                );
+              })}
+            </FormGroup>
+            <FormHelperText>{helperTexts.types}</FormHelperText>
+          </FormControl>
+        </Box>
+        <FormControl fullWidth error={errors.deliveryPrice} variant="outlined">
+          <FormLabel id="deliveryPrice" component="legend">
+            Preço da entrega
+          </FormLabel>
+          <OutlinedInput
+            id="deliveryPrice"
+            value={states.deliveryPrice}
+            autoFocus
+            onChange={handleChange("deliveryPrice")}
+            aria-describedby="deliveryPrice"
+            inputProps={{
+              "aria-label": "deliveryPrice ",
+            }}
+            labelWidth={0}
+          />
+          <FormHelperText>{helperTexts.deliveryPrice}</FormHelperText>
+        </FormControl>
+        <Button type="submit" variant="contained" color="primary">
+          <Typography className={mainClasses.secondaryText} variant="body1">
+            Cadastrar
+          </Typography>
+        </Button>
+      </FormContainer>
+    </Container>
   );
 }
 

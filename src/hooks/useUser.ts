@@ -21,8 +21,8 @@ export interface IUser extends IUserCreate {
 }
 
 const useUser = () => {
-  const getAll = async (fairId: string) => {
-    const { data, status } = await api.get(`/product/${fairId}`);
+  const create = async (user: IUserCreate) => {
+    const { data, status } = await api.post("/product/", user);
 
     return { data, status } as {
       data: IUser[];
@@ -30,7 +30,7 @@ const useUser = () => {
     };
   };
 
-  return { getAll };
+  return { create };
 };
 
 export { useUser };

@@ -31,6 +31,25 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
     paddingTop: "40px",
     paddingBottom: "40px",
   },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+  checkbox: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  btwBox: {
+    margin: "2rem",
+  },
+  spaceButtons: {
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  boxSpace: {
+    marginLeft: "15px",
+  },
 }));
 
 export { FormContainer, PasswordContainer, useRegisterStyle };

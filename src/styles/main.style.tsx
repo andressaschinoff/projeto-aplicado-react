@@ -9,6 +9,9 @@ const useMainStyle = makeStyles((theme: Theme) => ({
   secondaryText: {
     color: "#FFFFFF",
   },
+  flexBox: {
+    display: "flex",
+  },
 }));
 
 export { useMainStyle };

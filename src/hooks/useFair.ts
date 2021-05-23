@@ -6,15 +6,15 @@ export interface IFairCreate {
   address: string;
   opening: string;
   closing: string;
-  weekDay: string;
+  weekdays: string[];
   deliveryPrice: number;
   types: string[];
 }
 
 export interface IFair extends IFairCreate {
   id: string;
-  score?: number;
-  moneySign?: number;
+  score: number;
+  moneySign: number;
 }
 
 const useFair = () => {
@@ -27,7 +27,16 @@ const useFair = () => {
     };
   };
 
-  return { getAll };
+  const create = async (fair: IFairCreate) => {
+    const { data, status } = await api.post("/fair", fair);
+
+    return { data, status } as {
+      data: IFair;
+      status: number;
+    };
+  };
+
+  return { getAll, create };
 };
 
 export { useFair };

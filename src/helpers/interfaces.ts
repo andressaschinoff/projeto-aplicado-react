@@ -1,18 +1,15 @@
+import { IFair, IFairCreate } from "../hooks/useFair";
 import { IFullAddress } from "../hooks/useFullAddress";
+import { IUserCreate } from "../hooks/useUser";
 
-export interface IUserRegisterState {
-  name: string;
-  cpf: string;
-  email: string;
+export interface IUserRegisterState extends IUserCreate {
   password: string;
   reapeatPassword: string;
-  telephone: string;
-  role: string;
-  zipcode?: string;
-  address?: string;
   fullAddress?: IFullAddress;
   showPassword: boolean;
   showReapeatPassword: boolean;
+  fair?: IFair;
+  fairName?: string;
 }
 
 export interface IUserError {
@@ -35,6 +32,10 @@ export interface IUserHelperText {
   role: string;
 }
 
+export interface IFairState extends IFairCreate {
+  addressNumber: string;
+}
+
 export interface IFairError {
   name: boolean;
   zipcode: boolean;
@@ -42,19 +43,19 @@ export interface IFairError {
   addressNumber: boolean;
   opening: boolean;
   closing: boolean;
-  weekDay: boolean;
+  weekdays: boolean;
   deliveryPrice: boolean;
   types: boolean;
 }
 
-export interface IFairHelperText {
+export interface IFairHelpers {
   name: string;
   zipcode: string;
   address: string;
   addressNumber: string;
   opening: string;
   closing: string;
-  weekDay: string;
+  weekdays: string;
   deliveryPrice: string;
   types: string;
 }
@@ -72,6 +73,15 @@ export interface IFullAddressError {
 export interface IConvertAddress {
   zipcode: string;
   address: string;
+}
+
+export interface ILoginState {
+  email: string;
+  password: string;
+  helper: string;
+  showpass: boolean;
+  isReady: boolean;
+  error: boolean;
 }
 
 export interface IAddressFunctions {

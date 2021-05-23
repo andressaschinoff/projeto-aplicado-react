@@ -14,12 +14,16 @@ import {
   IFullAddressHelper,
   IZipcodeFunctions,
 } from "../helpers/interfaces";
+import { useMainStyle } from "../styles/main.style";
+import Box from "@material-ui/core/Box";
+import { Container } from "@material-ui/core";
 
 interface Props {
   mustHasAddress: boolean;
 }
 
 const AddressComponent = forwardRef((props: Props, ref) => {
+  const mainClasses = useMainStyle();
   const zipcodeRef = useRef<IZipcodeFunctions>(null);
   const [states, setStates] = React.useState<IFullAddress>(defaultFullAddress);
   const [helperTexts, setHelperTexts] = React.useState<IFullAddressHelper>({
@@ -110,84 +114,92 @@ const AddressComponent = forwardRef((props: Props, ref) => {
 
   return (
     <>
-      <ZipcodeInput
-        id="formatted-text-mask-input"
-        ref={zipcodeRef}
-        label="CEP"
-        error={errors.zipcode}
-        helperText={helperTexts.zipcode}
-        onChange={handleZipcodeChange}
-      />
-      <FormControl fullWidth variant="outlined">
-        <FormLabel id="outlined-adornment-address" component="legend">
-          Logradouro
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-address"
-          disabled
-          value={states.address}
-          labelWidth={0}
+      <Box className={mainClasses.flexBox}>
+        <ZipcodeInput
+          id="formatted-text-mask-input"
+          ref={zipcodeRef}
+          label="CEP"
+          error={errors.zipcode}
+          helperText={helperTexts.zipcode}
+          onChange={handleZipcodeChange}
         />
-      </FormControl>
-      <FormControl
-        fullWidth
-        error={props.mustHasAddress && errors.number}
-        variant="outlined"
-      >
-        <FormLabel id="outlined-adornment-number" component="legend">
-          Número
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-number"
-          value={states.number}
-          onChange={handleNumberChange}
-          labelWidth={0}
-        />
-        <FormHelperText>{helperTexts.number}</FormHelperText>
-      </FormControl>
-      <FormControl fullWidth variant="outlined">
-        <FormLabel id="outlined-adornment-complement" component="legend">
-          Complemento
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-complement"
-          value={states.complement}
-          labelWidth={0}
-        />
-      </FormControl>
-      <FormControl fullWidth variant="outlined">
-        <FormLabel id="outlined-adornment-city" component="legend">
-          Cidade
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-city"
-          disabled
-          value={states.city}
-          labelWidth={0}
-        />
-      </FormControl>
-      <FormControl fullWidth variant="outlined">
-        <FormLabel id="outlined-adornment-county" component="legend">
-          Bairro
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-county"
-          disabled
-          value={states.county}
-          labelWidth={0}
-        />
-      </FormControl>
-      <FormControl fullWidth variant="outlined">
-        <FormLabel id="outlined-adornment-uf" component="legend">
-          UF
-        </FormLabel>
-        <OutlinedInput
-          id="outlined-adornment-uf"
-          disabled
-          value={states.uf}
-          labelWidth={0}
-        />
-      </FormControl>
+        <FormControl fullWidth variant="outlined">
+          <FormLabel id="outlined-adornment-address" component="legend">
+            Logradouro
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-address"
+            disabled
+            value={states.address}
+            labelWidth={0}
+          />
+        </FormControl>
+      </Box>
+      <Box className={mainClasses.flexBox}>
+        <FormControl
+          fullWidth
+          error={props.mustHasAddress && errors.number}
+          variant="outlined"
+        >
+          <FormLabel id="outlined-adornment-number" component="legend">
+            Número
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-number"
+            value={states.number}
+            onChange={handleNumberChange}
+            labelWidth={0}
+          />
+          <FormHelperText>{helperTexts.number}</FormHelperText>
+        </FormControl>
+        <FormControl fullWidth variant="outlined">
+          <FormLabel id="outlined-adornment-complement" component="legend">
+            Complemento
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-complement"
+            value={states.complement}
+            labelWidth={0}
+          />
+        </FormControl>
+      </Box>
+      <Box className={mainClasses.flexBox}>
+        <FormControl fullWidth variant="outlined">
+          <FormLabel id="outlined-adornment-city" component="legend">
+            Cidade
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-city"
+            disabled
+            value={states.city}
+            labelWidth={0}
+          />
+        </FormControl>
+        <Box className={mainClasses.flexBox}>
+          <FormControl fullWidth variant="outlined">
+            <FormLabel id="outlined-adornment-county" component="legend">
+              Bairro
+            </FormLabel>
+            <OutlinedInput
+              id="outlined-adornment-county"
+              disabled
+              value={states.county}
+              labelWidth={0}
+            />
+          </FormControl>
+          <FormControl fullWidth variant="outlined">
+            <FormLabel id="outlined-adornment-uf" component="legend">
+              UF
+            </FormLabel>
+            <OutlinedInput
+              id="outlined-adornment-uf"
+              disabled
+              value={states.uf}
+              labelWidth={0}
+            />
+          </FormControl>
+        </Box>
+      </Box>
     </>
   );
 });

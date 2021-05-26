@@ -16,11 +16,8 @@ import {
 } from "../helpers/interfaces";
 import { useMainStyle } from "../styles/main.style";
 import Box from "@material-ui/core/Box";
-import { Container } from "@material-ui/core";
 
-interface Props {
-  mustHasAddress: boolean;
-}
+interface Props {}
 
 const AddressComponent = forwardRef((props: Props, ref) => {
   const mainClasses = useMainStyle();
@@ -66,6 +63,13 @@ const AddressComponent = forwardRef((props: Props, ref) => {
     setErrors({ ...errors, number: false });
   };
 
+  const handleComplementChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.target as HTMLInputElement;
+    setStates({ ...states, complement: value });
+  };
+
   const getAddressInfo = () => {
     const address = `${states.address}|${states.number}|${states.complement}|${states.county}|${states.city}|${states.uf}`;
     return { address, zipcode: states.zipcode } as IConvertAddress;
@@ -80,16 +84,7 @@ const AddressComponent = forwardRef((props: Props, ref) => {
     let newErrors = errors;
     let newHelpers = helperTexts;
     let hasError = false;
-    if (!props.mustHasAddress) {
-      newErrors = { number: false, zipcode: false };
-      newHelpers = {
-        number: "",
-        zipcode: "",
-      };
-      setErrors(newErrors);
-      setHelperTexts(newHelpers);
-      return hasError;
-    }
+
     const cleanZipcode = states.zipcode.replace("-", "").trim();
     if (cleanZipcode.length !== 8) {
       newErrors = { ...newErrors, zipcode: true };
@@ -136,11 +131,7 @@ const AddressComponent = forwardRef((props: Props, ref) => {
         </FormControl>
       </Box>
       <Box className={mainClasses.flexBox}>
-        <FormControl
-          fullWidth
-          error={props.mustHasAddress && errors.number}
-          variant="outlined"
-        >
+        <FormControl fullWidth error={errors.number} variant="outlined">
           <FormLabel id="outlined-adornment-number" component="legend">
             Número
           </FormLabel>
@@ -160,6 +151,7 @@ const AddressComponent = forwardRef((props: Props, ref) => {
             id="outlined-adornment-complement"
             value={states.complement}
             labelWidth={0}
+            onChange={handleComplementChange}
           />
         </FormControl>
       </Box>

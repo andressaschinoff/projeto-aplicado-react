@@ -36,9 +36,10 @@ export function MenuItems() {
           </Button>
         </li>
         <li>
+          {console.log(signed)}
           <Button
             component={Link}
-            to={signed ? "/login" : "/perfil"}
+            to={signed ? "/perfil" : "/login"}
             color="inherit"
           >
             <Typography id="text" variant="subtitle1">
@@ -46,25 +47,35 @@ export function MenuItems() {
             </Typography>
           </Button>
         </li>
-        <li>
-          <Button component={Link} to="/registrar" color="inherit">
-            <Typography id="text" variant="subtitle1">
-              Registrar
-            </Typography>
-          </Button>
-        </li>
-        <li>
-          <Button
-            component={Link}
-            to="/cadastrar-feira"
-            variant="outlined"
-            color="primary"
-          >
-            <Typography id="text" variant="subtitle1">
-              Cadastrar Feira?
-            </Typography>
-          </Button>
-        </li>
+        {console.log(signed)}
+        {!signed && (
+          <li>
+            <Button
+              component={Link}
+              to="/registrar"
+              variant="outlined"
+              color="primary"
+            >
+              <Typography id="text" variant="subtitle1">
+                Registrar
+              </Typography>
+            </Button>
+          </li>
+        )}
+        {signed && user?.role === "seller" && (
+          <li>
+            <Button
+              component={Link}
+              to="/cadastrar-feira"
+              variant="outlined"
+              color="primary"
+            >
+              <Typography id="text" variant="subtitle1">
+                Cadastrar Feira?
+              </Typography>
+            </Button>
+          </li>
+        )}
       </MenuItemsOptions>
       <IconButton component={Link} to="/carrinho" color="primary">
         <ShoppingCartIcon fontSize="large" color="primary" />

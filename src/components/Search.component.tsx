@@ -12,11 +12,11 @@ export function SearchComponent(prop: Props) {
 
   return (
     <Paper component="form" className={classes.root}>
-      <InputBase
+      {/* <InputBase
         className={classes.input}
         placeholder="Procure um produto"
         inputProps={{ "aria-label": "procure um produto" }}
-      />
+      /> */}
       <IconButton
         type="submit"
         className={classes.iconButton}

@@ -1,11 +1,12 @@
+import Swal from "sweetalert2";
+import { defaultTroller, defaultUser } from "../helpers/defaults";
 import { api } from "../services/api";
-import { IFullAddress } from "./useFullAddress";
 import { ITroller } from "./useTroller";
 
 export interface IUserCreate {
+  name: string;
   cpf: string;
   email: string;
-  name: string;
   password?: string;
   role: string;
   telephone: string;
@@ -17,17 +18,26 @@ export interface IUser extends IUserCreate {
   id: string;
   trollers?: ITroller[];
   fair?: ITroller;
-  fullAddress?: IFullAddress;
 }
 
 const useUser = () => {
   const create = async (user: IUserCreate) => {
-    const { data, status } = await api.post("/product/", user);
+    try {
+      const { data, status } = await api.post("/user/", user);
 
-    return { data, status } as {
-      data: IUser[];
-      status: number;
-    };
+      return { data, status } as {
+        data: IUser[];
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
+      Swal.fire(
+        "Ops!",
+        "Ocorreu algum erro na criação do seu usuário, tente novamente mais tarde!",
+        "error"
+      );
+      return { data: defaultUser, status: 400 };
+    }
   };
 
   return { create };

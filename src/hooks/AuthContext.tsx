@@ -3,6 +3,7 @@ import api from "../services/api";
 import { IUser } from "./useUser";
 import jwt_decode from "jwt-decode";
 import { defaultUser } from "../helpers/defaults";
+import Swal from "sweetalert2";
 
 export const AuthContext = createContext<IContextProps>({} as IContextProps);
 
@@ -23,22 +24,34 @@ export const AuthProvider = (props: any) => {
   const [user, setUser] = useState<IUser>(defaultUser);
 
   const login = async (loginInfo: ILogin) => {
-    const { data, status } = await api.post("/login", loginInfo);
+    try {
+      const { data, status } = await api.post("/login", loginInfo);
 
-    if (status !== 200) {
+      const { token } = data;
+      const currentUser: IUser = jwt_decode(token);
+      setUser(currentUser);
+      setSigned(true);
+      return { data, status } as {
+        data: string;
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
       setSigned(false);
-      console.log("here");
-      return { status } as { status: number };
+      Swal.fire(
+        "Ops",
+        "Ocorreu algum erro ao logar, por favor tente mais tarde!",
+        "error"
+      );
+      return {
+        data: loginInfo,
+        status: 400,
+      };
     }
-    const { token } = data;
-    const currentUser: IUser = jwt_decode(token);
-    console.log(currentUser);
-    setUser(currentUser);
-    setSigned(true);
-    return { status } as { status: number };
   };
 
   const logout = () => {
+    api.get("/login/logout");
     setUser(defaultUser);
     setSigned(false);
   };

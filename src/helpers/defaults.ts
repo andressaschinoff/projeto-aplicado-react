@@ -1,5 +1,7 @@
 import { IFair } from "../hooks/useFair";
 import { IFullAddress } from "../hooks/useFullAddress";
+import { IProduct } from "../hooks/useProduct";
+import { ITroller } from "../hooks/useTroller";
 import { IUser } from "../hooks/useUser";
 import {
   IFairError,
@@ -123,6 +125,19 @@ const defaultFairHelpers: IFairHelpers = {
   addressNumber: "",
 };
 
+const defaultTroller: ITroller = {
+  id: "",
+  active: false,
+};
+
+const defaultProduct: IProduct = {
+  id: "",
+  name: "",
+  type: "",
+  price: 0,
+  fair: "",
+};
+
 const weekdays = [
   "Monday",
   "Tuesday",
@@ -144,5 +159,7 @@ export {
   defaultUserHelper,
   defaultUserErrors,
   defaultLogin,
+  defaultTroller,
+  defaultProduct,
   weekdays,
 };

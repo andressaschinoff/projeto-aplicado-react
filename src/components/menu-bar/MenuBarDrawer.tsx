@@ -43,19 +43,22 @@ function MenuDrawer(props: Props) {
             Home
           </Typography>
         </Button>
+        {console.log(signed)}
         <Button
           color="secondary"
           component={Link}
-          to={signed ? "/login" : "/perfil"}
+          to={signed ? "/perfil" : "/login"}
           onClick={onClose}
         >
           <Typography id="text" variant="subtitle1">
             {signed ? "Perfil" : "Login"}
           </Typography>
         </Button>
+        {console.log(signed)}
         {!signed && (
           <Button
-            color="secondary"
+            variant="outlined"
+            color="primary"
             component={Link}
             to="/registrar"
             onClick={onClose}

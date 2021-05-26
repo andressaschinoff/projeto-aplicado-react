@@ -59,7 +59,6 @@ const CPFInput = forwardRef((inputProps: Props, ref) => {
     const { value } = event.target;
     setValue(value);
     const cleanZipCode = value.replace(/[-.]/g, "").trim();
-    console.log(cleanZipCode.length);
     if (cleanZipCode.length === 11) {
       inputProps.onChange(event);
     }

@@ -20,13 +20,14 @@ const useTypes = () => {
   }, []);
 
   const get = async () => {
-    const { data, status } = await api.get("/type");
+    try {
+      const { data } = await api.get("/type");
 
-    if (status !== 200) {
+      setTypes(data);
+    } catch (error) {
+      console.log(error);
       setTypes([...backupTypes]);
-      return;
     }
-    setTypes(data);
   };
 
   return { types };

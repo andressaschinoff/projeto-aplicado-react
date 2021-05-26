@@ -59,7 +59,6 @@ const CelphoneInput = forwardRef((inputProps: Props, ref) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     const cleanZipCode = event.target.value.replace(/[()-\s+]/g, "");
-    console.log(cleanZipCode);
     if (cleanZipCode.length === 11) {
       inputProps.onChange(event);
     }

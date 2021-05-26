@@ -11,13 +11,13 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles>
-          {/* <LoadingProvider>
+          <LoadingProvider>
             <AuthProvider>
-              <TrollerProvider> */}
-          <Home />
-          {/* </TrollerProvider>
+              <TrollerProvider>
+                <Home />
+              </TrollerProvider>
             </AuthProvider>
-          </LoadingProvider> */}
+          </LoadingProvider>
         </GlobalStyles>
       </ThemeProvider>
     </>

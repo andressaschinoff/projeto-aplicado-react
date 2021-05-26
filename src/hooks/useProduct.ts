@@ -1,3 +1,5 @@
+import Swal from "sweetalert2";
+import { defaultProduct } from "../helpers/defaults";
 import { api } from "../services/api";
 
 export interface IProductCreate {
@@ -14,15 +16,45 @@ export interface IProduct extends IProductCreate {
 
 const useProduct = () => {
   const getAll = async (fairId: string) => {
-    const { data, status } = await api.get(`/product/${fairId}`);
+    try {
+      const { data, status } = await api.get(`/product/${fairId}`);
 
-    return { data, status } as {
-      data: IProduct[];
-      status: number;
-    };
+      return { data, status } as {
+        data: IProduct[];
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        status: 400,
+        data: [defaultProduct],
+      };
+    }
   };
 
-  return { getAll };
+  const create = async (product: IProductCreate) => {
+    try {
+      const { data, status } = await api.post("/product", product);
+
+      return { data, status } as {
+        data: IProduct;
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
+      Swal.fire(
+        "Ops",
+        "Ocorreu algum erro ao criar seu produto, por favor tente mais tarde!",
+        "error"
+      );
+      return {
+        data: defaultProduct,
+        status: 400,
+      };
+    }
+  };
+
+  return { getAll, create };
 };
 
 export { useProduct };

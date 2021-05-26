@@ -1,3 +1,4 @@
+import { defaultFair } from "../helpers/defaults";
 import { api } from "../services/api";
 
 export interface IFairCreate {
@@ -19,21 +20,37 @@ export interface IFair extends IFairCreate {
 
 const useFair = () => {
   const getAll = async () => {
-    const { data, status } = await api.get("/fair");
+    try {
+      const { data, status } = await api.get("/fair");
 
-    return { data, status } as {
-      data: IFair[];
-      status: number;
-    };
+      return { data, status } as {
+        data: IFair[];
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        data: [defaultFair],
+        status: 400,
+      };
+    }
   };
 
   const create = async (fair: IFairCreate) => {
-    const { data, status } = await api.post("/fair", fair);
+    try {
+      const { data, status } = await api.post("/fair", fair);
 
-    return { data, status } as {
-      data: IFair;
-      status: number;
-    };
+      return { data, status } as {
+        data: IFair;
+        status: number;
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        data: defaultFair,
+        status: 400,
+      };
+    }
   };
 
   return { getAll, create };

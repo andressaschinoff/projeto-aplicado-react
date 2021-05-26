@@ -150,7 +150,7 @@ export function FairRegister() {
           />
           <FormHelperText>{helperTexts.name}</FormHelperText>
         </FormControl>
-        <AddressComponent ref={addressRef} mustHasAddress={true} />
+        <AddressComponent ref={addressRef} />
         <Box className={mainClasses.flexBox}>
           <FormControl fullWidth error={errors.opening} variant="outlined">
             <FormLabel id="user-opening-register" component="legend">

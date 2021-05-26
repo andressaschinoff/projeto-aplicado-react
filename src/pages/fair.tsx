@@ -60,7 +60,7 @@ const Fair: React.FC = () => {
       : [newTrollerProduct];
     const newTroller = { id: troller.id, products: newProducts };
     // const { data, status } = await update(newTroller);
-    // if (status === 200) {
+    // if (status >= 200 && status < 300) {
     //   setTroller(data);
     // }
     setTroller(newTroller);
@@ -86,7 +86,7 @@ const Fair: React.FC = () => {
       : [newTrollerProduct];
     const newTroller = { id: troller.id, products: newProducts };
     // const { data, status } = await update(newTroller);
-    // if (status === 200) {
+    // if (status <= 200 && status < 300) {
     //   setTroller(data);
     // }
     setTroller(newTroller);

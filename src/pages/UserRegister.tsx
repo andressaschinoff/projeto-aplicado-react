@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import Swal from "sweetalert2";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
@@ -10,7 +11,10 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { Box, Button, Container, Typography } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
 
 import {
   IUserError,
@@ -26,16 +30,12 @@ import {
   defaultUserErrors,
 } from "../helpers/defaults";
 
-import {
-  FormContainer,
-  PasswordContainer,
-  useRegisterStyle,
-} from "../styles/register.style";
+import { FormContainer, useRegisterStyle } from "../styles/register.style";
 import { useMainStyle } from "../styles/main.style";
 
 import AddressComponent from "../components/Address.component";
 import CpfInput from "../components/CpfInput";
-import { IUserCreate } from "../hooks/useUser";
+import { IUserCreate, useUser } from "../hooks/useUser";
 import LoadingContext from "../hooks/LoadingContext";
 import CelphoneInput from "../components/CelphoneInput";
 import { IFair, useFair } from "../hooks/useFair";
@@ -46,6 +46,7 @@ export function UserRegister() {
   const celphoneRef = useRef<ICelphoneFunctions>(null);
   const { isLoading, setIsLoading } = useContext(LoadingContext);
   const { getAll } = useFair();
+  const { create } = useUser();
   const { mainContainer, spaceButtons, boxSpace } = useRegisterStyle();
   const { secondaryText, flexBox } = useMainStyle();
   const [fairs, setFairs] = useState<IFair[]>();
@@ -80,7 +81,6 @@ export function UserRegister() {
     const { value } = event.target as HTMLInputElement;
     setStates({ ...states, fairName: value });
     const fairSelecteds = fairs?.filter(({ name }) => name.includes(value));
-    console.log(fairSelecteds);
     setFilterFairs(fairSelecteds);
   };
 
@@ -103,9 +103,12 @@ export function UserRegister() {
     event.preventDefault();
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const hasAddressError = addressRef.current?.checkAddressErrors();
+    const hasAddressError =
+      states?.role === "buyer"
+        ? addressRef.current?.checkAddressErrors()
+        : false;
     const hasError = checkErrors();
     if (hasError || hasAddressError) {
       return;
@@ -124,7 +127,8 @@ export function UserRegister() {
       return;
     }
 
-    const formatterAddress = addressRef.current?.getAddressInfo();
+    const formatterAddress =
+      states?.role === "buyer" ? addressRef.current?.getAddressInfo() : null;
 
     const person: IUserCreate = {
       cpf: states.cpf,
@@ -136,12 +140,15 @@ export function UserRegister() {
       address: formatterAddress?.address,
       zipcode: formatterAddress?.zipcode,
     };
-    console.log("persiste");
-    console.log(person);
-    addressRef.current?.clearAddressInfo();
-    cpfRef.current?.clearCpf();
-    celphoneRef.current?.clearCelphone();
-    setStates(defaultUserRegister);
+    const { data, status } = await create(person);
+    console.log(data);
+    if (status >= 200 && status < 300) {
+      addressRef.current?.clearAddressInfo();
+      cpfRef.current?.clearCpf();
+      celphoneRef.current?.clearCelphone();
+      setStates(defaultUserRegister);
+      Swal.fire("Eba!", "Seu usuário foi criado com sucesso!", "success");
+    }
   };
 
   const checkErrors = () => {
@@ -150,7 +157,7 @@ export function UserRegister() {
     let hasError = false;
     Object.keys(states).forEach((key) => {
       const value = states[key as StateType];
-      if (typeof value === "string") {
+      if (typeof value === "string" && key !== "fairName") {
         const cleanValue = value.replace(/[-.()]/g, "").trim();
         if (!cleanValue) {
           newErrors = { ...newErrors, [key]: true };
@@ -161,6 +168,7 @@ export function UserRegister() {
           hasError = true;
         }
       }
+      console.log("here goes check to fair");
     });
     setErrors(newErrors);
     setHelperTexts(newHelpers);
@@ -308,7 +316,7 @@ export function UserRegister() {
             </RadioGroup>
             <FormHelperText>{helperTexts.role}</FormHelperText>
           </FormControl>
-          {states.role === "seller" && (
+          {states?.role === "seller" && (
             <FormControl
               className={`${boxSpace} ${spaceButtons}`}
               fullWidth
@@ -357,10 +365,7 @@ export function UserRegister() {
             </FormControl>
           )}
         </Box>
-        <AddressComponent
-          ref={addressRef}
-          mustHasAddress={states.role === "buyer"}
-        />
+        {states?.role === "buyer" && <AddressComponent ref={addressRef} />}
         <Button
           className={spaceButtons}
           type="submit"

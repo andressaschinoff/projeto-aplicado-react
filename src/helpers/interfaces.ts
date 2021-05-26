@@ -5,7 +5,6 @@ import { IUserCreate } from "../hooks/useUser";
 export interface IUserRegisterState extends IUserCreate {
   password: string;
   reapeatPassword: string;
-  fullAddress?: IFullAddress;
   showPassword: boolean;
   showReapeatPassword: boolean;
   fair?: IFair;
@@ -32,8 +31,13 @@ export interface IUserHelperText {
   role: string;
 }
 
-export interface IFairState extends IFairCreate {
-  addressNumber: string;
+export interface IFairState {
+  name: string;
+  opening: string;
+  closing: string;
+  weekdays: string[];
+  deliveryPrice: number;
+  types: string[];
 }
 
 export interface IFairError {

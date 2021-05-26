@@ -36,15 +36,15 @@ import { useMainStyle } from "../styles/main.style";
 import AddressComponent from "../components/Address.component";
 import CpfInput from "../components/CpfInput";
 import { IUserCreate, useUser } from "../hooks/useUser";
-import LoadingContext from "../hooks/LoadingContext";
 import CelphoneInput from "../components/CelphoneInput";
 import { IFair, useFair } from "../hooks/useFair";
+import { useHistory } from "react-router";
 
 export function UserRegister() {
+  const history = useHistory();
   const addressRef = useRef<IAddressFunctions>(null);
   const cpfRef = useRef<ICpfFunctions>(null);
   const celphoneRef = useRef<ICelphoneFunctions>(null);
-  const { isLoading, setIsLoading } = useContext(LoadingContext);
   const { getAll } = useFair();
   const { create } = useUser();
   const { mainContainer, spaceButtons, boxSpace } = useRegisterStyle();
@@ -80,7 +80,9 @@ export function UserRegister() {
   const handleFairChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
     setStates({ ...states, fairName: value });
-    const fairSelecteds = fairs?.filter(({ name }) => name.includes(value));
+    const fairSelecteds = fairs?.filter(({ name }) =>
+      name.toLocaleLowerCase().includes(value)
+    );
     setFilterFairs(fairSelecteds);
   };
 
@@ -88,7 +90,7 @@ export function UserRegister() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { value } = event.target as HTMLInputElement;
-    const fairSelected = fairs?.filter(({ name }) => name === value)[0];
+    const fairSelected = fairs?.find(({ id }) => id === value);
     setStates({ ...states, fair: fairSelected });
   };
 
@@ -139,6 +141,7 @@ export function UserRegister() {
       telephone: states.telephone,
       address: formatterAddress?.address,
       zipcode: formatterAddress?.zipcode,
+      fair: states?.fair,
     };
     const { status } = await create(person);
     if (status >= 200 && status < 300) {
@@ -146,7 +149,13 @@ export function UserRegister() {
       cpfRef.current?.clearCpf();
       celphoneRef.current?.clearCelphone();
       setStates(defaultUserRegister);
-      Swal.fire("Eba!", "Seu usuário foi criado com sucesso!", "success");
+      Swal.fire(
+        "Eba!",
+        "Seu usuário foi criado com sucesso! Faça login para acessar mais funcionalidades.",
+        "success"
+      );
+
+      history.push("/login");
     }
   };
 
@@ -341,13 +350,13 @@ export function UserRegister() {
             </FormControl>
           )}
         </Box>
-        <Box>
+        <Box className={flexBox}>
           {!!filterFairs && (
             <FormControl component="fieldset" error={errors.role}>
               <RadioGroup
                 aria-label="roleAnwser"
                 name="roleAnwser"
-                value={states.role}
+                value={states?.fair?.id}
                 onChange={handleSelectedFairChange}
               >
                 {filterFairs.map(({ id, name }) => {

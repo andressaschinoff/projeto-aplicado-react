@@ -37,13 +37,16 @@ import {
 import { useMainStyle } from "../styles/main.style";
 
 import AddressComponent from "../components/Address.component";
-import LoadingContext from "../hooks/LoadingContext";
 import { useTypes } from "../hooks/useTypes";
+import { IFairCreate, useFair } from "../hooks/useFair";
+import Swal from "sweetalert2";
+import { useHistory } from "react-router-dom";
 
 export function FairRegister() {
   const addressRef = useRef<IAddressFunctions>(null);
-  const { isLoading, setIsLoading } = useContext(LoadingContext);
+  const history = useHistory();
   const { types } = useTypes();
+  const { create } = useFair();
   const classes = useRegisterStyle();
   const mainClasses = useMainStyle();
   const [states, setStates] = useState<IFairState>(defaultFairStates);
@@ -61,25 +64,21 @@ export function FairRegister() {
       setErrors({ ...errors, [prop]: false });
     };
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name } = event.target;
-    const currentWeekdays = states.weekdays;
-    const newWeekdays = currentWeekdays.includes(name)
-      ? currentWeekdays.filter((s) => s !== name)
-      : [...currentWeekdays, name];
+  const handleCheckboxChange =
+    (prop: keyof IFairState) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name } = event.target;
+      const current = states[prop];
+      if (typeof current === "object") {
+        const newArray = current.includes(name)
+          ? current.filter((s) => s !== name)
+          : [...current, name];
 
-    setStates({ ...states, weekdays: [...newWeekdays] });
-  };
+        setStates({ ...states, [prop]: [...newArray] });
+      }
+    };
 
-  // const handleSelectedFairChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const { value } = event.target as HTMLInputElement;
-  //   const fairSelected = fairs?.filter(({ name }) => name === value)[0];
-  //   setStates({ ...states, fair: fairSelected });
-  // };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const hasAddressError = addressRef.current?.checkAddressErrors();
     const hasError = checkErrors();
@@ -87,24 +86,29 @@ export function FairRegister() {
       return;
     }
 
-    const formatterAddress = addressRef.current?.getAddressInfo();
+    const formatterAddress = !addressRef.current?.getAddressInfo()
+      ? { address: "", zipcode: "" }
+      : addressRef.current?.getAddressInfo();
 
-    // const person: IUserCreate = {
-    //   cpf: states.cpf,
-    //   email: states.email,
-    //   name: states.name,
-    //   password: states.password,
-    //   role: states.role,
-    //   telephone: states.telephone,
-    //   address: formatterAddress?.address,
-    //   zipcode: formatterAddress?.zipcode,
-    // };
-    // console.log("persiste");
-    // console.log(person);
-    // addressRef.current?.clearAddressInfo();
-    // cpfRef.current?.clearCpf();
-    // celphoneRef.current?.clearCelphone();
-    // setStates(defaultUserRegister);
+    const fair: IFairCreate = {
+      address: formatterAddress.address,
+      closing: states.closing,
+      deliveryPrice: states.deliveryPrice,
+      name: states.name,
+      opening: states.opening,
+      types: states.types,
+      weekdays: states.weekdays,
+      zipcode: formatterAddress.zipcode,
+    };
+    const { status } = await create(fair);
+
+    if (status >= 200 && status < 300) {
+      addressRef.current?.clearAddressInfo();
+      setStates(defaultFairStates);
+      Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
+
+      history.push("/");
+    }
   };
 
   const checkErrors = () => {
@@ -203,7 +207,7 @@ export function FairRegister() {
                     control={
                       <Checkbox
                         checked={states.weekdays.includes(day)}
-                        onChange={handleCheckboxChange}
+                        onChange={handleCheckboxChange("weekdays")}
                         name={day}
                       />
                     }
@@ -225,7 +229,7 @@ export function FairRegister() {
                     control={
                       <Checkbox
                         checked={states.types.includes(type)}
-                        onChange={handleCheckboxChange}
+                        onChange={handleCheckboxChange("types")}
                         name={type}
                       />
                     }

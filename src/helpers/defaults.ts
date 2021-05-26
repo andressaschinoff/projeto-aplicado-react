@@ -45,7 +45,7 @@ const defaultFair: IFair = {
   moneySign: 0,
 };
 
-const defaultUserRegister: IUserRegisterState = {
+const defaultUserState: IUserRegisterState = {
   cpf: "",
   email: "",
   name: "",
@@ -53,7 +53,6 @@ const defaultUserRegister: IUserRegisterState = {
   reapeatPassword: "",
   role: "",
   telephone: "",
-  fullAddress: defaultFullAddress,
   showPassword: false,
   showReapeatPassword: false,
   fair: defaultFair,
@@ -90,15 +89,12 @@ const defaultLogin: ILoginState = {
 };
 
 const defaultFairStates: IFairState = {
-  address: "",
   closing: "",
   deliveryPrice: 0,
   name: "",
   opening: "",
   types: [],
   weekdays: [],
-  zipcode: "",
-  addressNumber: "",
 };
 
 const defaultFairErros: IFairError = {
@@ -155,7 +151,7 @@ export {
   defaultFairErros,
   defaultFairHelpers,
   defaultFairStates,
-  defaultUserRegister,
+  defaultUserState as defaultUserRegister,
   defaultUserHelper,
   defaultUserErrors,
   defaultLogin,

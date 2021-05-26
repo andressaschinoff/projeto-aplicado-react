@@ -4,14 +4,9 @@ import { Button, IconButton, Drawer, Typography } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { MenuDrawerContainer } from "../../styles/menu-bar/menu-drawer.style";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import TrollerContext from "../../hooks/TrollerContext";
 import AuthContext from "../../hooks/AuthContext";
-import Routes from "../../routes";
-import Fairs from "../../pages/Fairs";
-import Fair from "../../pages/Fair";
-import UserRegister from "../../pages/UserRegister";
-import FairRegister from "../../pages/FairRegister";
-import Login from "../../pages/Login";
 
 export interface Props {
   open: boolean;
@@ -21,7 +16,7 @@ export interface Props {
 function MenuDrawer(props: Props) {
   const { open, onClose } = props;
   const { troller } = useContext(TrollerContext);
-  const { signed, user } = useContext(AuthContext);
+  const { signed, user, logout } = useContext(AuthContext);
   const [quantities, setQuantities] = useState(0);
 
   useEffect(() => {
@@ -43,7 +38,6 @@ function MenuDrawer(props: Props) {
             Home
           </Typography>
         </Button>
-        {console.log(signed)}
         <Button
           color="secondary"
           component={Link}
@@ -54,7 +48,6 @@ function MenuDrawer(props: Props) {
             {signed ? "Perfil" : "Login"}
           </Typography>
         </Button>
-        {console.log(signed)}
         {!signed && (
           <Button
             variant="outlined"
@@ -80,6 +73,16 @@ function MenuDrawer(props: Props) {
               Cadastrar Feira?
             </Typography>
           </Button>
+        )}
+        {signed && (
+          <IconButton
+            onClick={() => {
+              onClose();
+              logout();
+            }}
+          >
+            <ExitToAppIcon fontSize="large" color="error" />
+          </IconButton>
         )}
         <IconButton
           component={Link}

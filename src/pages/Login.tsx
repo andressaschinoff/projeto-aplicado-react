@@ -25,7 +25,7 @@ export default function Login() {
   const { mainContainer, spaceButtons } = useRegisterStyle();
   const { secondaryText } = useMainStyle();
 
-  const { login, signed } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const history = useHistory();
 
   const [states, setStates] = useState<ILoginState>(defaultLogin);
@@ -38,12 +38,12 @@ export default function Login() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await login({
+    const { status } = await login({
       email: states.email,
       password: states.password,
     });
 
-    if (!signed) {
+    if (status >= 300) {
       setStates({
         ...states,
         helper: "Seu email ou senha não está correto.",
@@ -52,6 +52,7 @@ export default function Login() {
       return;
     }
 
+    setStates(defaultLogin);
     history.push("/");
   };
 
@@ -73,8 +74,8 @@ export default function Login() {
       setStates({ ...states, [prop]: value });
     };
 
-  const handleClickShowPassword = () => () => {
-    const value = !states["showpass"];
+  const handleClickShowPassword = () => {
+    const value = !states.showpass;
     setStates({ ...states, showpass: value });
   };
 
@@ -87,7 +88,7 @@ export default function Login() {
   return (
     <Container className={mainContainer} maxWidth="md">
       <FormContainer onSubmit={handleSubmit}>
-        <FormControl error={states.error} fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined">
           <FormGroup>
             <FormLabel id="login-email" component="legend">
               Email
@@ -103,6 +104,8 @@ export default function Login() {
               labelWidth={0}
             />
           </FormGroup>
+        </FormControl>
+        <FormControl error={states.error} fullWidth variant="outlined">
           <FormGroup>
             <FormLabel id="login--password" component="legend">
               Senha

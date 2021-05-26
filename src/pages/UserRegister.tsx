@@ -140,8 +140,7 @@ export function UserRegister() {
       address: formatterAddress?.address,
       zipcode: formatterAddress?.zipcode,
     };
-    const { data, status } = await create(person);
-    console.log(data);
+    const { status } = await create(person);
     if (status >= 200 && status < 300) {
       addressRef.current?.clearAddressInfo();
       cpfRef.current?.clearCpf();
@@ -168,7 +167,6 @@ export function UserRegister() {
           hasError = true;
         }
       }
-      console.log("here goes check to fair");
     });
     setErrors(newErrors);
     setHelperTexts(newHelpers);

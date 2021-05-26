@@ -32,7 +32,6 @@ export const AuthProvider = (props: any) => {
       setUser(currentUser);
       setSigned(true);
       return { data, status } as {
-        data: string;
         status: number;
       };
     } catch (error) {
@@ -44,7 +43,6 @@ export const AuthProvider = (props: any) => {
         "error"
       );
       return {
-        data: loginInfo,
         status: 400,
       };
     }

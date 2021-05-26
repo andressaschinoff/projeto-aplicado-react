@@ -27,14 +27,14 @@ const MenuImg = styled.img`
 `;
 
 const useMenuStyle = makeStyles((theme: Theme) => ({
-  linkOutline: {
-    textDecoration: "none",
-    color: theme.palette.primary.main,
-  },
-  linkDefault: {
-    textDecoration: "none",
-    color: theme.palette.grey[900],
-  },
+  // linkOutline: {
+  //   textDecoration: "none",
+  //   color: theme.palette.primary.main,
+  // },
+  // linkDefault: {
+  //   textDecoration: "none",
+  //   color: theme.palette.grey[900],
+  // },
 }));
 
 export { LogoSection, MenuHeader, MenuImg, MenuSection, useMenuStyle };

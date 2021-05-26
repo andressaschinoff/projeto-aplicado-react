@@ -30,7 +30,7 @@ const FairsGridContainer = styled(Box)`
 
 const LandingFairContainer = styled(Box)`
   background-color: var(--secondary-color);
-  height: calc(100vh - 124px);
+  min-height: calc(100vh - 124px);
   @media (max-width: 600px) {
     height: max-content;
   }

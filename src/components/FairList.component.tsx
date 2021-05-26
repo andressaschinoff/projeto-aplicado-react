@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
-import { IFair } from "../hooks/useFairs";
+import { IFair } from "../hooks/useFair";
 import {
   FairComponentMainContainer,
   FairComponentRowBox,
@@ -13,7 +13,7 @@ interface Props {
   onFairSelected: (id: string) => void;
 }
 
-export function FairComponent({ fair, onFairSelected }: Props) {
+export function FairListComponent({ fair, onFairSelected }: Props) {
   const { name, id, score, deliveryPrice, types } = fair;
   const { star, scoreStyle, typesSpacing } = useFairsStyle();
 
@@ -55,4 +55,4 @@ export function FairComponent({ fair, onFairSelected }: Props) {
   );
 }
 
-export default FairComponent;
+export default FairListComponent;

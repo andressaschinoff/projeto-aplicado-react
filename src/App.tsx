@@ -1,21 +1,26 @@
 import { ThemeProvider } from "@material-ui/core";
-import { LoadingProvider } from "./hooks/loading-context";
+import { AuthProvider } from "./hooks/AuthContext";
+import { LoadingProvider } from "./hooks/LoadingContext";
 import { TrollerProvider } from "./hooks/TrollerContext";
-import Routes from "./routes";
+import Home from "./pages/Home";
 import theme from "./theme";
 import GlobalStyles from "./theme/GlobalStyle";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles>
-        <LoadingProvider>
-          <TrollerProvider>
-            <Routes />
-          </TrollerProvider>
-        </LoadingProvider>
-      </GlobalStyles>
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles>
+          <LoadingProvider>
+            <AuthProvider>
+              <TrollerProvider>
+                <Home />
+              </TrollerProvider>
+            </AuthProvider>
+          </LoadingProvider>
+        </GlobalStyles>
+      </ThemeProvider>
+    </>
   );
 }
 

@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useLocation } from "react-router";
+import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 
-import AddCircleIcon from "@material-ui/icons/AddCircle";
+import MixedImage from "../assets/mixed.jpg";
 
 import { IFair } from "../hooks/useFair";
-import { useFairsStyle } from "../styles/fairs/fairs.style";
-
-import MixedImage from "../assets/mixed.jpg";
+import { IProduct, useProduct } from "../hooks/useProduct";
+import { IOrderItem, useTroller } from "../hooks/useTroller";
+import TrollerContext from "../hooks/TrollerContext";
 
 import {
   FairRowBox,
@@ -18,19 +19,15 @@ import {
   ProductContainer,
   ProductsContainer,
 } from "../styles/fairs/fair.style";
-import { IProduct, useProduct } from "../hooks/useProduct";
-import TrollerContext from "../hooks/TrollerContext";
-import { IOrderItem, useTroller } from "../hooks/useTroller";
+import { useFairsStyle } from "../styles/fairs/fairs.style";
+import { MainContainer, useMainStyle } from "../styles/main.style";
+
 import ProductComponent from "../components/Product.component";
 import SearchComponent from "../components/Search.component";
-import { MainContainer, useMainStyle } from "../styles/main.style";
-import Avatar from "@material-ui/core/Avatar";
-import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
 
 const Fair: React.FC = () => {
   const { state: fair } = useLocation<IFair>();
-  const { update, create } = useTroller();
+  const { update } = useTroller();
   const { troller, setTroller, fairTroller, setFairTroller } =
     useContext(TrollerContext);
   // const { user, signed } = useContext(AuthContext);
@@ -39,7 +36,6 @@ const Fair: React.FC = () => {
   const [orderItens, setOrderItens] = useState<IOrderItem[]>([]);
   const { largeAvatar } = useMainStyle();
   const { typesSpacing } = useFairsStyle();
-  const { addIcon } = useMainStyle();
 
   useEffect(() => {
     if (!!fair && !!fair.id) {
@@ -51,6 +47,7 @@ const Fair: React.FC = () => {
         setProducts(data);
       })();
     }
+    console.log(troller);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fair]);
 
@@ -91,10 +88,14 @@ const Fair: React.FC = () => {
 
   const setNewInfo = async (newOrderItens: IOrderItem[]) => {
     setOrderItens(newOrderItens);
-    const newTroller = { ...troller, orderItens: newOrderItens };
+    console.log(fair);
+    console.log(troller);
+    const newTroller = { ...troller, orderItens: newOrderItens, fair: fair };
     if (!troller?.id) {
       setTroller(newTroller);
+      return;
     }
+    console.log(troller);
     const { data, status } = await update(troller?.id, newTroller);
     if (status >= 300) {
       setTroller(newTroller);

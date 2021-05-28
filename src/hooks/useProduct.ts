@@ -8,6 +8,8 @@ export interface IProductCreate {
   type: string;
   price: number;
   fair: IFair;
+  unitsOfMeasure: string;
+  countInStock?: number;
 }
 
 export interface IProduct extends IProductCreate {

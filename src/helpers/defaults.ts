@@ -126,12 +126,14 @@ const defaultTroller: ITroller = {
   active: true,
   orderItens: [{ quantity: 0 }],
   total: 0,
+  subtotal: 0,
 };
 
 const defaultProduct: IProduct = {
   id: "",
   name: "",
   type: "",
+  unitsOfMeasure: "",
   price: 0,
   fair: defaultFair,
 };

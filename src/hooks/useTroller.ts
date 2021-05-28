@@ -2,6 +2,7 @@ import api from "../services/api";
 import { IUser } from "./useUser";
 import { IProduct } from "./useProduct";
 import { defaultTroller } from "../helpers/defaults";
+import { IFair } from "./useFair";
 
 export interface ITrollerCreate {
   orderItens?: IOrderItem[];
@@ -16,8 +17,10 @@ export interface IOrderItem {
 
 export interface ITroller extends ITrollerCreate {
   id: string;
+  fair?: IFair;
   active: boolean;
   total: number;
+  subtotal: number;
 }
 
 const useTroller = () => {

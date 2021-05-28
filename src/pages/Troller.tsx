@@ -14,6 +14,7 @@ import {
   useTrollerStyle,
 } from "../styles/troller.style";
 import { Button } from "@material-ui/core";
+import { roundedNumber } from "../helpers/functions";
 
 interface Props {}
 
@@ -53,7 +54,7 @@ export default function Troller(props: Props) {
             <Box className={classes.fairContainer}>
               <Avatar className={classes.avatar} />
               <Typography className={classes.fairName}>
-                {fair?.name || "Feira"}{" "}
+                {troller?.fair?.name}
               </Typography>
             </Box>
           </Box>
@@ -66,7 +67,7 @@ export default function Troller(props: Props) {
                   <Typography>
                     {quantity} X {product?.name}
                   </Typography>
-                  <Typography>{total}</Typography>
+                  <Typography>{roundedNumber(total)}</Typography>
                 </Box>
               );
             })}
@@ -86,15 +87,17 @@ export default function Troller(props: Props) {
           <Box className={classes.container}>
             <Box className={classes.elements}>
               <Typography>Subtotal</Typography>
-              <Typography>R$ {troller?.total}</Typography>
+              <Typography>R$ {roundedNumber(troller?.subtotal)}</Typography>
             </Box>
             <Box className={classes.elements}>
               <Typography>Taxa de entrega</Typography>
-              <Typography>R$ {fair?.deliveryPrice}</Typography>
+              <Typography>
+                R$ {roundedNumber(troller?.fair?.deliveryPrice)}
+              </Typography>
             </Box>
             <Box className={classes.elements}>
               <Typography>Total</Typography>
-              <Typography>R$ {troller?.total + fair?.deliveryPrice}</Typography>
+              <Typography>R$ {roundedNumber(troller?.total)}</Typography>
             </Box>
           </Box>
         </CenterContainer>

@@ -12,6 +12,7 @@ import { useFairsStyle } from "../styles/fairs/fairs.style";
 import Box from "@material-ui/core/Box";
 import Avatar from "@material-ui/core/Avatar";
 import { useMainStyle } from "../styles/main.style";
+import { roundedNumber } from "../helpers/functions";
 
 interface Props {
   product: IProduct;
@@ -43,7 +44,7 @@ export function ProductComponent({
             {type}
           </Typography>
           {!!description && <Typography variant="h6">{description}</Typography>}
-          <Typography variant="h6">R$ {price}</Typography>
+          <Typography variant="h6">R$ {roundedNumber(price)}</Typography>
         </Box>
         <Box className={typesSpacing}>
           <IconButton

@@ -41,7 +41,7 @@ const useFullAddress = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: 400,
         fullAddress: defaultFullAddress,

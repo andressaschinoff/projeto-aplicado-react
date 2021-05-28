@@ -8,7 +8,7 @@ import UserRegister from "./pages/UserRegister";
 
 const routes = [
   {
-    path: "/feira",
+    path: "/feira/:name",
     exact: true,
     component: Fair,
   },

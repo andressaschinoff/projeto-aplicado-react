@@ -31,7 +31,7 @@ const useUser = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Swal.fire(
         "Ops!",
         "Ocorreu algum erro na criação do seu usuário, tente novamente mais tarde!",

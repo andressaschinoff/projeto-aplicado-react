@@ -19,8 +19,8 @@ export function MenuItems() {
 
   useEffect(() => {
     const quantity =
-      !!troller && !!troller.products
-        ? troller.products?.reduce((acc, curr) => acc + curr.quantity, 0)
+      !!troller && !!troller.orderItens
+        ? troller.orderItens?.reduce((acc, curr) => acc + curr.quantity, 0)
         : 0;
     setQuantities(quantity);
   }, [troller]);

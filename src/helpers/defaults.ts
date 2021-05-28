@@ -123,7 +123,9 @@ const defaultFairHelpers: IFairHelpers = {
 
 const defaultTroller: ITroller = {
   id: "",
-  active: false,
+  active: true,
+  orderItens: [{ quantity: 0 }],
+  total: 0,
 };
 
 const defaultProduct: IProduct = {
@@ -131,7 +133,7 @@ const defaultProduct: IProduct = {
   name: "",
   type: "",
   price: 0,
-  fair: "",
+  fair: defaultFair,
 };
 
 const weekdays = [

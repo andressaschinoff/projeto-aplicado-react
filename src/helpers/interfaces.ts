@@ -1,6 +1,7 @@
 import { IFair, IFairCreate } from "../hooks/useFair";
 import { IFullAddress } from "../hooks/useFullAddress";
-import { IUserCreate } from "../hooks/useUser";
+import { IOrderItem } from "../hooks/useTroller";
+import { IUser, IUserCreate } from "../hooks/useUser";
 
 export interface IUserRegisterState extends IUserCreate {
   password: string;
@@ -86,6 +87,14 @@ export interface ILoginState {
   showpass: boolean;
   isReady: boolean;
   error: boolean;
+}
+
+export interface ITrollerState {
+  id: string;
+  active: boolean;
+  orderItens: IOrderItem[];
+  user?: IUser;
+  total: number;
 }
 
 export interface IAddressFunctions {

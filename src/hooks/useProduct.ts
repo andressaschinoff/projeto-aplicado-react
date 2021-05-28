@@ -1,12 +1,13 @@
 import Swal from "sweetalert2";
 import { defaultProduct } from "../helpers/defaults";
 import { api } from "../services/api";
+import { IFair } from "./useFair";
 
 export interface IProductCreate {
   name: string;
   type: string;
   price: number;
-  fair: string;
+  fair: IFair;
 }
 
 export interface IProduct extends IProductCreate {
@@ -24,7 +25,7 @@ const useProduct = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: 400,
         data: [defaultProduct],
@@ -41,7 +42,7 @@ const useProduct = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Swal.fire(
         "Ops",
         "Ocorreu algum erro ao criar seu produto, por favor tente mais tarde!",

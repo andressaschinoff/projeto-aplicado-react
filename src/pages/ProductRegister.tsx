@@ -1,20 +1,18 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormGroup,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import Typography from "@material-ui/core/Typography";
+
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 import {
   IAddressFunctions,
@@ -29,11 +27,7 @@ import {
   weekdays,
 } from "../helpers/defaults";
 
-import {
-  FormContainer,
-  PasswordContainer,
-  useRegisterStyle,
-} from "../styles/register.style";
+import { FormContainer, useRegisterStyle } from "../styles/register.style";
 import { useMainStyle } from "../styles/main.style";
 
 import AddressComponent from "../components/Address.component";
@@ -102,14 +96,13 @@ export function FairRegister() {
     };
     const { status } = await create(fair);
 
-    if (status >= 300) {
-      return;
-    }
-    addressRef.current?.clearAddressInfo();
-    setStates(defaultFairStates);
-    Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
+    if (status >= 200 && status < 300) {
+      addressRef.current?.clearAddressInfo();
+      setStates(defaultFairStates);
+      Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
 
-    history.push("/");
+      history.push("/");
+    }
   };
 
   const checkErrors = () => {
@@ -260,6 +253,11 @@ export function FairRegister() {
         />
         <FormHelperText>{helperTexts.deliveryPrice}</FormHelperText>
       </FormControl>
+      <Box>
+        <IconButton color="primary" onClick={() => {}}>
+          <AddCircleIcon color="primary" />
+        </IconButton>
+      </Box>
       <Button type="submit" variant="contained" color="primary">
         <Typography className={mainClasses.secondaryText} variant="body1">
           Cadastrar

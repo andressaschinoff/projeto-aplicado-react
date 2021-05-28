@@ -28,9 +28,26 @@ const useFair = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         data: [defaultFair],
+        status: 400,
+      };
+    }
+  };
+
+  const getOne = async (id: string) => {
+    try {
+      const { data, status } = await api.get(`/fair/${id}`);
+
+      return { data, status } as {
+        data: IFair;
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: defaultFair,
         status: 400,
       };
     }
@@ -45,7 +62,7 @@ const useFair = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         data: defaultFair,
         status: 400,
@@ -53,7 +70,7 @@ const useFair = () => {
     }
   };
 
-  return { getAll, create };
+  return { getAll, getOne, create };
 };
 
 export { useFair };

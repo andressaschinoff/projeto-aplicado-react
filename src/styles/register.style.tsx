@@ -27,10 +27,6 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
     alignItems: "center",
     width: 400,
   },
-  mainContainer: {
-    paddingTop: "40px",
-    paddingBottom: "40px",
-  },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),

@@ -24,30 +24,28 @@ const Fairs: React.FC = () => {
 
   const handleFairSelected = (id: string) => {
     const currentFair = fairs.find((fair) => fair.id === id);
-    push("/feira", currentFair);
+    push(`/feira/${id}`, currentFair);
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box className={fairsMainContainer}>
-        <Typography variant="h3" align="center" color="textPrimary">
-          Nossas parceiras
-        </Typography>
-        <FairsGridContainer>
-          {!!fairs &&
-            fairs.length > 0 &&
-            fairs.map((fair) => {
-              return (
-                <FairListComponent
-                  onFairSelected={handleFairSelected}
-                  key={fair.id}
-                  fair={fair}
-                />
-              );
-            })}
-        </FairsGridContainer>
-      </Box>
-    </Container>
+    <Box className={fairsMainContainer}>
+      <Typography variant="h3" align="center" color="textPrimary">
+        Nossas parceiras
+      </Typography>
+      <FairsGridContainer>
+        {!!fairs &&
+          fairs.length > 0 &&
+          fairs.map((fair) => {
+            return (
+              <FairListComponent
+                onFairSelected={handleFairSelected}
+                key={fair.id}
+                fair={fair}
+              />
+            );
+          })}
+      </FairsGridContainer>
+    </Box>
   );
 };
 

@@ -22,7 +22,7 @@ import AuthContext from "../hooks/AuthContext";
 import FormGroup from "@material-ui/core/FormGroup";
 
 export default function Login() {
-  const { mainContainer, spaceButtons } = useRegisterStyle();
+  const { spaceButtons } = useRegisterStyle();
   const { secondaryText } = useMainStyle();
 
   const { login } = useContext(AuthContext);
@@ -86,72 +86,70 @@ export default function Login() {
   };
 
   return (
-    <Container className={mainContainer} maxWidth="md">
-      <FormContainer onSubmit={handleSubmit}>
-        <FormControl fullWidth variant="outlined">
-          <FormGroup>
-            <FormLabel id="login-email" component="legend">
-              Email
-            </FormLabel>
-            <OutlinedInput
-              id="outlined-email-login"
-              value={states.email}
-              onChange={handleChange("email")}
-              aria-describedby="login-email"
-              inputProps={{
-                "aria-label": "email",
-              }}
-              labelWidth={0}
-            />
-          </FormGroup>
-        </FormControl>
-        <FormControl error={states.error} fullWidth variant="outlined">
-          <FormGroup>
-            <FormLabel id="login--password" component="legend">
-              Senha
-            </FormLabel>
-            <OutlinedInput
-              id="outlined-password-login"
-              type={states.showpass ? "text" : "password"}
-              value={states.password}
-              onChange={handleChange("password")}
-              endAdornment={
-                <InputAdornment component="i" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {states.showpass ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              labelWidth={0}
-            />
-          </FormGroup>
-          <FormHelperText>{states.helper}</FormHelperText>
-        </FormControl>
-        <Button
-          className={spaceButtons}
-          type="submit"
-          variant="contained"
-          color="secondary"
-        >
-          <Typography className={secondaryText} variant="body1">
-            Cancelar
-          </Typography>
-        </Button>
-        <Button
-          type="submit"
-          disabled={!states.isReady}
-          variant="contained"
-          color="primary"
-        >
-          <Typography className={secondaryText} variant="body1">
-            Entrar
-          </Typography>
-        </Button>
-      </FormContainer>
-    </Container>
+    <FormContainer onSubmit={handleSubmit}>
+      <FormControl fullWidth variant="outlined">
+        <FormGroup>
+          <FormLabel id="login-email" component="legend">
+            Email
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-email-login"
+            value={states.email}
+            onChange={handleChange("email")}
+            aria-describedby="login-email"
+            inputProps={{
+              "aria-label": "email",
+            }}
+            labelWidth={0}
+          />
+        </FormGroup>
+      </FormControl>
+      <FormControl error={states.error} fullWidth variant="outlined">
+        <FormGroup>
+          <FormLabel id="login--password" component="legend">
+            Senha
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-password-login"
+            type={states.showpass ? "text" : "password"}
+            value={states.password}
+            onChange={handleChange("password")}
+            endAdornment={
+              <InputAdornment component="i" position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {states.showpass ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            }
+            labelWidth={0}
+          />
+        </FormGroup>
+        <FormHelperText>{states.helper}</FormHelperText>
+      </FormControl>
+      <Button
+        className={spaceButtons}
+        type="submit"
+        variant="contained"
+        color="secondary"
+      >
+        <Typography className={secondaryText} variant="body1">
+          Cancelar
+        </Typography>
+      </Button>
+      <Button
+        type="submit"
+        disabled={!states.isReady}
+        variant="contained"
+        color="primary"
+      >
+        <Typography className={secondaryText} variant="body1">
+          Entrar
+        </Typography>
+      </Button>
+    </FormContainer>
   );
 }

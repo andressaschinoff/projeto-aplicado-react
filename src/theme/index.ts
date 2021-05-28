@@ -36,7 +36,7 @@ const theme = createMuiTheme({
     // },
   },
   typography: {
-    fontFamily: "Montserrat, sans-serif",
+    // fontFamily: "Montserrat, Roboto, sans-serif",
     h4: {
       fontFamily: "Jost, sans-serif",
       fontSize: 48,

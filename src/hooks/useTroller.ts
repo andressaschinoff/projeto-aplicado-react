@@ -4,18 +4,20 @@ import { IProduct } from "./useProduct";
 import { defaultTroller } from "../helpers/defaults";
 
 export interface ITrollerCreate {
-  products?: IProducts[];
+  orderItens?: IOrderItem[];
   user?: IUser;
 }
 
-export interface IProducts {
+export interface IOrderItem {
   quantity: number;
   product?: IProduct;
+  total?: number;
 }
 
 export interface ITroller extends ITrollerCreate {
   id: string;
-  active?: boolean;
+  active: boolean;
+  total: number;
 }
 
 const useTroller = () => {
@@ -29,7 +31,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         data: defaultTroller,
         status: 400,
@@ -46,7 +48,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         data: defaultTroller,
         status: 400,
@@ -54,19 +56,16 @@ const useTroller = () => {
     }
   };
 
-  const update = async (troller: ITroller) => {
+  const update = async (id: string, troller: ITroller) => {
     try {
-      const { data, status } = await api.put(
-        `/troller/${troller?.id}`,
-        troller
-      );
+      const { data, status } = await api.put(`/troller/${id}`, troller);
 
       return { data, status } as {
         data: ITroller;
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: 400,
         data: troller,
@@ -82,7 +81,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: 400,
       };
@@ -98,7 +97,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       try {
         const { data, status } = await create(user);
@@ -108,7 +107,7 @@ const useTroller = () => {
           status: number;
         };
       } catch (e) {
-        console.log(error);
+        console.error(error);
         return { data: defaultTroller, status: 400 };
       }
     }

@@ -35,7 +35,7 @@ export const AuthProvider = (props: any) => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setSigned(false);
       Swal.fire(
         "Ops",

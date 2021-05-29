@@ -11,15 +11,6 @@ const CenterContainer = styled(Box)`
   justify-content: center;
 `;
 
-const LineBreak = styled.div`
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  height: 1px;
-  background-color: #a6a6a5;
-  opacity: 40%;
-`;
-
 const useTrollerStyle = makeStyles((theme: Theme) => ({
   root: {},
   fairName: {
@@ -62,4 +53,4 @@ const useTrollerStyle = makeStyles((theme: Theme) => ({
   },
 }));
 
-export { CenterContainer, LineBreak, useTrollerStyle };
+export { CenterContainer, useTrollerStyle };

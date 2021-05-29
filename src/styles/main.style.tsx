@@ -13,6 +13,15 @@ const MainContainer = styled(Box)`
   overflow: auto;
 `;
 
+const LineBreak = styled.div`
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: 1px;
+  background-color: #a6a6a5;
+  opacity: 40%;
+`;
+
 const useMainStyle = makeStyles((theme: Theme) => ({
   root: {},
   secondaryText: {
@@ -35,4 +44,4 @@ const useMainStyle = makeStyles((theme: Theme) => ({
   },
 }));
 
-export { MainContainer, useMainStyle };
+export { MainContainer, LineBreak, useMainStyle };

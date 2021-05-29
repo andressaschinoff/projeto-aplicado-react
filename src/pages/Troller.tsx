@@ -7,12 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import TrollerContext from "../hooks/TrollerContext";
 import { IFair, useFair } from "../hooks/useFair";
 import { defaultFair } from "../helpers/defaults";
-import { MainContainer } from "../styles/main.style";
-import {
-  CenterContainer,
-  LineBreak,
-  useTrollerStyle,
-} from "../styles/troller.style";
+import { MainContainer, LineBreak } from "../styles/main.style";
+import { CenterContainer, useTrollerStyle } from "../styles/troller.style";
 import { Button } from "@material-ui/core";
 import { roundedNumber } from "../helpers/functions";
 

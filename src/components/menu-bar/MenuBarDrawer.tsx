@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Drawer, Typography } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { MenuDrawerContainer } from "../../styles/menu-bar/menu-drawer.style";
@@ -15,7 +15,8 @@ export interface Props {
 
 function MenuDrawer(props: Props) {
   const { open, onClose } = props;
-  const { troller } = useContext(TrollerContext);
+  const { push } = useHistory();
+  const { troller, setIsCheckout } = useContext(TrollerContext);
   const { signed, user, logout } = useContext(AuthContext);
   const [quantities, setQuantities] = useState(0);
 
@@ -78,7 +79,9 @@ function MenuDrawer(props: Props) {
           <IconButton
             onClick={() => {
               onClose();
+              setIsCheckout(false);
               logout();
+              push("/");
             }}
           >
             <ExitToAppIcon fontSize="large" color="error" />

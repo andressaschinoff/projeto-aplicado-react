@@ -1,43 +1,32 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import TrollerContext from "../hooks/TrollerContext";
-import { IFair, useFair } from "../hooks/useFair";
-import { defaultFair } from "../helpers/defaults";
 import { MainContainer, LineBreak } from "../styles/main.style";
 import { CenterContainer, useTrollerStyle } from "../styles/troller.style";
-import { Button } from "@material-ui/core";
 import { roundedNumber } from "../helpers/functions";
+import Button from "@material-ui/core/Button";
+import AuthContext from "../hooks/AuthContext";
 
 interface Props {}
 
 export default function Troller(props: Props) {
-  const { fairTroller, troller } = useContext(TrollerContext);
-  const { getOne } = useFair();
+  const history = useHistory();
+  const { troller, setIsCheckout } = useContext(TrollerContext);
+  const { signed } = useContext(AuthContext);
   const classes = useTrollerStyle();
-  const [fair, setFair] = useState<IFair>(defaultFair);
 
-  useEffect(() => {
-    if (!!fairTroller) {
-      (async () => {
-        const { data, status } = await getOne(fairTroller);
-        if (status >= 300) {
-          return;
-        }
-        setFair(data);
-      })();
+  const handleCheckout = () => {
+    setIsCheckout(true);
+    if (!signed) {
+      history.push("/login");
+    } else {
+      history.push("/compra");
     }
-    return () => {
-      // cleanup;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fairTroller]);
-
-  const preventDefault = (event: React.SyntheticEvent) =>
-    event.preventDefault();
+  };
 
   return (
     <MainContainer>
@@ -57,25 +46,34 @@ export default function Troller(props: Props) {
           <LineBreak />
           <Box className={classes.products}>
             <Typography className={classes.text}>Produtos</Typography>
-            {troller?.orderItens?.map(({ quantity, product, total }) => {
-              return (
-                <Box className={classes.elements}>
-                  <Typography>
-                    {quantity} X {product?.name}
-                  </Typography>
-                  <Typography>{roundedNumber(total)}</Typography>
-                </Box>
-              );
-            })}
+            {!!troller?.orderItens &&
+              !!troller.orderItens[0]?.product &&
+              troller?.orderItens
+                // .sort((a, b) => a.product?.name.localeCompare(b.product?.name))
+                .map(({ quantity, product, total }) => {
+                  return (
+                    <Box className={classes.elements}>
+                      <Typography>
+                        {quantity} X {product?.name}
+                      </Typography>
+                      <Typography>{roundedNumber(total)}</Typography>
+                    </Box>
+                  );
+                })}
             <Link
               className={classes.link}
               component={RouterLink}
-              to={`/feira/${fair?.id}`}
-              onClick={preventDefault}
+              to={
+                !!troller?.orderItens && !!troller.orderItens[0]?.product
+                  ? `/feira/${troller?.fair?.id}`
+                  : "/"
+              }
               color="error"
               variant="body1"
             >
-              Adicionar mais produtos
+              {!!troller?.orderItens && !!troller.orderItens[0]?.product
+                ? "Adicionar mais produtos"
+                : "Adicionar produtos"}
             </Link>
           </Box>
           <LineBreak />
@@ -96,6 +94,9 @@ export default function Troller(props: Props) {
               <Typography>R$ {roundedNumber(troller?.total)}</Typography>
             </Box>
           </Box>
+          <Button variant="contained" color="primary" onClick={handleCheckout}>
+            Comprar
+          </Button>
         </CenterContainer>
       )}
     </MainContainer>

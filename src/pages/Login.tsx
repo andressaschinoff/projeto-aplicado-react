@@ -20,12 +20,19 @@ import { ILoginState } from "../helpers/interfaces";
 import { defaultLogin } from "../helpers/defaults";
 import AuthContext from "../hooks/AuthContext";
 import FormGroup from "@material-ui/core/FormGroup";
+import Swal from "sweetalert2";
+import TrollerContext from "../hooks/TrollerContext";
+import { useTroller } from "../hooks/useTroller";
 
 export default function Login() {
   const { spaceButtons } = useRegisterStyle();
   const { secondaryText } = useMainStyle();
 
   const { login } = useContext(AuthContext);
+  const { isCheckout, troller } = useContext(TrollerContext);
+
+  const { update } = useTroller();
+
   const history = useHistory();
 
   const [states, setStates] = useState<ILoginState>(defaultLogin);
@@ -38,12 +45,12 @@ export default function Login() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { status } = await login({
+    const { status, user } = await login({
       email: states.email,
       password: states.password,
     });
 
-    if (status >= 300) {
+    if (status >= 300 || !user) {
       setStates({
         ...states,
         helper: "Seu email ou senha não está correto.",
@@ -53,7 +60,23 @@ export default function Login() {
     }
 
     setStates(defaultLogin);
-    history.push("/");
+    if (isCheckout) {
+      await update({ ...troller, user });
+      history.push("/compra");
+    } else if (user.role === "seller") {
+      history.push("/area-do-vendedor");
+    } else if (user.role === "buyer") {
+      if (troller.total !== 0) {
+        await update({ ...troller, user });
+      }
+      history.push("/perfil");
+    } else {
+      Swal.fire(
+        "Ops",
+        "Ocorreu algum erro ao logar, por favor tente mais tarde!",
+        "error"
+      );
+    }
   };
 
   const checkEmpty = () => {

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -8,12 +8,12 @@ import {
   MenuItemsOptions,
 } from "../../styles/menu-bar/menu-items.style";
 
-import { useMenuStyle } from "../../styles/menu-bar/menu-bar.style";
 import TrollerContext from "../../hooks/TrollerContext";
 import AuthContext from "../../hooks/AuthContext";
 
 export function MenuItems() {
-  const { troller } = useContext(TrollerContext);
+  const { push } = useHistory();
+  const { troller, setIsCheckout } = useContext(TrollerContext);
   const { signed, user, logout } = useContext(AuthContext);
   const [quantities, setQuantities] = useState(0);
 
@@ -76,7 +76,14 @@ export function MenuItems() {
         )}
       </MenuItemsOptions>
       {signed && (
-        <IconButton color="primary" onClick={logout}>
+        <IconButton
+          color="primary"
+          onClick={() => {
+            setIsCheckout(false);
+            logout();
+            push("/");
+          }}
+        >
           <ExitToAppIcon fontSize="large" color="error" />
         </IconButton>
       )}

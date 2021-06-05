@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 
 import MixedImage from "../assets/mixed.jpg";
 
-import { IFair } from "../hooks/useFair";
+import { IFair, useFair } from "../hooks/useFair";
 import { IProduct, useProduct } from "../hooks/useProduct";
 import { IOrderItem, useTroller } from "../hooks/useTroller";
 import TrollerContext from "../hooks/TrollerContext";
@@ -24,32 +24,45 @@ import { MainContainer, useMainStyle } from "../styles/main.style";
 
 import ProductComponent from "../components/Product.component";
 import SearchComponent from "../components/Search.component";
+import { defaultFair } from "../helpers/defaults";
+import AuthContext from "../hooks/AuthContext";
 
 const Fair: React.FC = () => {
-  const { state: fair } = useLocation<IFair>();
+  const { signed, user } = useContext(AuthContext);
+  const { troller, setTroller } = useContext(TrollerContext);
+
+  const { pathname } = useLocation();
   const { update } = useTroller();
-  const { troller, setTroller, fairTroller, setFairTroller } =
-    useContext(TrollerContext);
-  // const { user, signed } = useContext(AuthContext);
   const { getAll } = useProduct();
+  const { getOne } = useFair();
+
+  const [currentFair, setCurrentFair] = useState<IFair>(defaultFair);
   const [products, setProducts] = useState<IProduct[]>([]);
   const [orderItens, setOrderItens] = useState<IOrderItem[]>([]);
+
   const { largeAvatar } = useMainStyle();
   const { typesSpacing } = useFairsStyle();
 
   useEffect(() => {
-    if (!!fair && !!fair.id) {
+    if (!!pathname) {
+      const id = pathname.split("/feira/")[1];
       (async () => {
-        const { data, status } = await getAll(fair.id);
+        const { data, status } = await getOne(id);
+        if (status !== 200) {
+          return;
+        }
+        setCurrentFair(data);
+      })();
+      (async () => {
+        const { data, status } = await getAll(id);
         if (status !== 200) {
           return;
         }
         setProducts(data);
       })();
     }
-    console.log(troller);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fair]);
+  }, [pathname]);
 
   useEffect(() => {
     const currentOrderItens = !!troller?.orderItens ? troller?.orderItens : [];
@@ -88,15 +101,16 @@ const Fair: React.FC = () => {
 
   const setNewInfo = async (newOrderItens: IOrderItem[]) => {
     setOrderItens(newOrderItens);
-    console.log(fair);
-    console.log(troller);
-    const newTroller = { ...troller, orderItens: newOrderItens, fair: fair };
+    const newTroller = {
+      ...troller,
+      orderItens: newOrderItens,
+      fair: currentFair,
+    };
     if (!troller?.id) {
       setTroller(newTroller);
       return;
     }
-    console.log(troller);
-    const { data, status } = await update(troller?.id, newTroller);
+    const { data, status } = await update(newTroller);
     if (status >= 300) {
       setTroller(newTroller);
       return;
@@ -116,16 +130,8 @@ const Fair: React.FC = () => {
       return null;
     }
 
-    if (fairTroller !== "" && foundProduct.fair.id !== fairTroller) {
-      const cleanTroller = { ...troller, orderItens: [] };
-      const { data } = await update(troller.id, cleanTroller);
-      setTroller(data);
-      setOrderItens([]);
-      return null;
-    }
-
     const filterOrderItens = orderItens.filter(
-      ({ product }) => product?.id !== productId
+      ({ product }) => !!product && product?.id !== productId
     );
 
     const oldOrder = orderItens.filter(
@@ -148,77 +154,77 @@ const Fair: React.FC = () => {
 
   return (
     <MainContainer>
-      <Box>
-        <Typography color="secondary" align="center" variant="h4">
-          {fair?.name}
-        </Typography>
+      {!!currentFair?.id && (
+        <Box>
+          <Box>
+            <Typography color="secondary" align="center" variant="h4">
+              {currentFair?.name}
+            </Typography>
 
-        <FairRowBox>
-          {fair?.types?.map((type) => {
-            return (
-              <Typography
-                color="primary"
-                align="center"
-                className={typesSpacing}
-                key={`${fair?.id}${type}`}
-                variant="h6"
-              >
-                {type}
-              </Typography>
-            );
-          })}
-        </FairRowBox>
-      </Box>
-      <Box>
-        <SearchComponent />
-      </Box>
-      <ProductsContainer>
-        {/* {signed && user.role === "seller" && ( */}
-        <ProductContainer>
-          <IconButton component={Link} to="/product-regiter" color="primary">
-            <Avatar
-              alt="Product Image"
-              src={MixedImage}
-              // src={`../assets${`/mixed.jpg`}`}
-              className={largeAvatar}
-            />
-          </IconButton>
-          <InfoProductContainer>
-            <Box className={typesSpacing}>
-              <Typography
-                component={Link}
-                color="inherit"
-                to="/product-regiter"
-                variant="h6"
-              >
-                Adicione um novo produto
-              </Typography>
-            </Box>
-            {/* <Box className={typesSpacing}>
-              <IconButton
-                component={Link}
-                to="/product-regiter"
-                color="primary"
-                onClick={() => {}}
-              >
-                <AddCircleIcon className={addIcon} color="primary" />
-              </IconButton>
-            </Box> */}
-          </InfoProductContainer>
-        </ProductContainer>
-        {/* )} */}
-        {!!products &&
-          products.map((product) => {
-            return (
-              <ProductComponent
-                key={product.id}
-                product={product}
-                addProduct={handleAddProduct}
-                removeProduct={handleRemoveProduct}
-              />
-            );
-          })}
-      </ProductsContainer>
+            <FairRowBox>
+              {currentFair?.types?.map((type) => {
+                return (
+                  <Typography
+                    color="primary"
+                    align="center"
+                    className={typesSpacing}
+                    key={`${currentFair?.id}${type}`}
+                    variant="h6"
+                  >
+                    {type}
+                  </Typography>
+                );
+              })}
+            </FairRowBox>
+          </Box>
+          <Box>
+            <SearchComponent />
+          </Box>
+          <ProductsContainer>
+            {signed && user.role === "seller" && (
+              <ProductContainer>
+                <IconButton
+                  component={Link}
+                  to="/product-regiter"
+                  color="primary"
+                >
+                  <Avatar
+                    alt="Product Image"
+                    src={MixedImage}
+                    // src={`../assets${`/mixed.jpg`}`}
+                    className={largeAvatar}
+                  />
+                </IconButton>
+                <InfoProductContainer>
+                  <Box className={typesSpacing}>
+                    <Typography
+                      component={Link}
+                      color="inherit"
+                      to="/product-regiter"
+                      variant="h6"
+                    >
+                      Adicione um novo produto
+                    </Typography>
+                  </Box>
+                </InfoProductContainer>
+              </ProductContainer>
+            )}
+            {!!products &&
+              products
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((product) => {
+                  return (
+                    <ProductComponent
+                      key={product.id}
+                      product={product}
+                      addProduct={handleAddProduct}
+                      removeProduct={handleRemoveProduct}
+                    />
+                  );
+                })}
+          </ProductsContainer>
+        </Box>
+      )}
     </MainContainer>
   );
 };

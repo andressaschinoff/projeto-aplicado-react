@@ -8,15 +8,15 @@ export const TrollerContext = createContext<IContexProps>({} as IContexProps);
 interface IContexProps {
   troller: ITroller;
   setTroller: (troller: ITroller) => void;
-  fairTroller: string;
-  setFairTroller: (fairId: string) => void;
+  isCheckout: boolean;
+  setIsCheckout: (isTrue: boolean) => void;
 }
 
 export const TrollerProvider = ({ children }: any) => {
   const { signed, user } = useContext(AuthContext);
   const [troller, setTroller] = useState<ITroller>(defaultTroller);
-  const [fairTroller, setFairTroller] = useState<string>("");
-  const { getEmpty, getActive } = useTroller();
+  const [isCheckout, setIsCheckout] = useState(false);
+  const { getEmpty, getUserActive } = useTroller();
 
   useEffect(() => {
     if (!signed) {
@@ -26,20 +26,20 @@ export const TrollerProvider = ({ children }: any) => {
       })();
     } else {
       (async () => {
-        const { data } = await getActive(user);
+        const { data } = await getUserActive(user);
         setTroller(data);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signed, user]);
+  }, [signed, user, troller.active]);
 
   return (
     <TrollerContext.Provider
       value={{
         troller,
         setTroller,
-        fairTroller,
-        setFairTroller,
+        isCheckout,
+        setIsCheckout,
       }}
     >
       {children}

@@ -6,11 +6,28 @@ const HelloContainer = styled(Box)``;
 
 const usePerfilStyle = makeStyles((theme: Theme) => ({
   root: {},
-  helloText: {
+  container: {
     padding: "10px 50px",
+  },
+  name: {
+    padding: "10px 80px",
   },
   personName: {
     fontFamily: "Jost",
+  },
+  borderBox: {
+    width: "400px",
+    margin: "10px 80px",
+    padding: "20px",
+    border: "1px solid #e3e3e1",
+    borderRadius: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  elements: {
+    padding: "10px 200px",
+    display: "flex",
+    justifyContent: "space-between",
   },
 }));
 

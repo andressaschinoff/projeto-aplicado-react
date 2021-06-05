@@ -10,6 +10,7 @@ export interface ITrollerCreate {
 }
 
 export interface IOrderItem {
+  id?: string;
   quantity: number;
   product?: IProduct;
   total?: number;
@@ -18,6 +19,8 @@ export interface IOrderItem {
 export interface ITroller extends ITrollerCreate {
   id: string;
   fair?: IFair;
+  orderNumber?: number;
+  sellers?: IUser;
   active: boolean;
   total: number;
   subtotal: number;
@@ -42,6 +45,20 @@ const useTroller = () => {
     }
   };
 
+  const checkout = async (id: string, paymentInfo: {}) => {
+    try {
+      const { data, status } = await api.post(
+        `/troller/checkout/${id}`,
+        paymentInfo
+      );
+
+      return { data, status } as { data: ITroller; status: number };
+    } catch (error) {
+      console.error(error);
+      return { data: defaultTroller, status: 400 };
+    }
+  };
+
   const getEmpty = async () => {
     try {
       const { data, status } = await api.get("/troller/empty");
@@ -59,9 +76,12 @@ const useTroller = () => {
     }
   };
 
-  const update = async (id: string, troller: ITroller) => {
+  const update = async (troller: ITroller) => {
     try {
-      const { data, status } = await api.put(`/troller/${id}`, troller);
+      const { data, status } = await api.put(
+        `/troller/${troller?.id}`,
+        troller
+      );
 
       return { data, status } as {
         data: ITroller;
@@ -91,9 +111,9 @@ const useTroller = () => {
     }
   };
 
-  const getActive = async (user: IUser) => {
+  const getUserActive = async (user: IUser) => {
     try {
-      const { data, status } = await api.get(`/troller/user/${user.id}`);
+      const { data, status } = await api.get(`/troller/user/${user.id}/active`);
 
       return { data, status } as {
         data: ITroller;
@@ -116,7 +136,44 @@ const useTroller = () => {
     }
   };
 
-  return { create, update, getEmpty, inactive, getActive };
+  const getOne = async (id: string) => {
+    try {
+      const { data, status } = await api.get(`/troller/${id}`);
+
+      return { data, status } as {
+        data: ITroller;
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return { data: defaultTroller, status: 400 };
+    }
+  };
+
+  const getAllUser = async (user: IUser) => {
+    try {
+      const { data, status } = await api.get(`/troller/user/${user.id}/all`);
+
+      return { data, status } as {
+        data: ITroller[];
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return { data: [defaultTroller], status: 400 };
+    }
+  };
+
+  return {
+    create,
+    update,
+    getEmpty,
+    inactive,
+    getUserActive,
+    getAllUser,
+    getOne,
+    checkout,
+  };
 };
 
 export { useTroller };

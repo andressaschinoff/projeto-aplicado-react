@@ -21,30 +21,22 @@ const theme = createMuiTheme({
     },
     primary: {
       main: "#22BF13",
-      // contrastText: colors.grey[900],
+      contrastText: colors.common.white,
     },
     secondary: {
       main: "#3F4E59",
-      // contrastText: "#fff",
+      contrastText: colors.common.white,
     },
-    // text: {
-    // primary: "#FFFFFF",
-    // secondary: colors.blueGrey[900],
-    // primary: colors.blueGrey[900],
-    // secondary: colors.grey[900],
-    // secondary: "#FFFFFF",
-    // },
   },
   typography: {
-    // fontFamily: "Montserrat, Roboto, sans-serif",
     h4: {
       fontFamily: "Jost, sans-serif",
-      fontSize: 40,
+      fontSize: 36,
       fontWeight: 700,
     },
     h5: {
       fontFamily: "Montserrat, sans-serif",
-      fontSize: 32,
+      fontSize: 24,
       fontWeight: 700,
     },
     h6: {

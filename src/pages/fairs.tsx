@@ -23,8 +23,7 @@ const Fairs: React.FC = () => {
   }, []);
 
   const handleFairSelected = (id: string) => {
-    const currentFair = fairs.find((fair) => fair.id === id);
-    push(`/feira/${id}`, currentFair);
+    push(`/feira/${id}`);
   };
 
   return (

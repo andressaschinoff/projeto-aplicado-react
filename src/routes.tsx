@@ -1,8 +1,9 @@
 import { Home } from "@material-ui/icons";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import AuthContext from "./hooks/AuthContext";
 import Buyer from "./pages/Buyer";
+import Checkout from "./pages/Checkout";
 import Fair from "./pages/Fair";
 import FairRegister from "./pages/FairRegister";
 import Fairs from "./pages/Fairs";
@@ -33,6 +34,9 @@ export default function Routes() {
       <SellerRoute path="/cadastrar-feira">
         <FairRegister />
       </SellerRoute>
+      <BuyerRoute path="/compra">
+        <Checkout />
+      </BuyerRoute>
       <Route exact path="/" component={Fairs} />
     </Switch>
   );

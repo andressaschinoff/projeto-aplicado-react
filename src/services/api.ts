@@ -12,6 +12,10 @@ const api = axios.create({
   timeout: 10000,
 });
 
+export const imageApi = axios.create({
+  baseURL: "http://localhost:3001/api/image",
+});
+
 // api.defaults.headers.authorization = !!token ? `Bearer ${token}` : "";
 
 export { api };

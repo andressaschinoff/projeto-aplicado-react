@@ -8,6 +8,7 @@ import Fair from "./pages/Fair";
 import FairRegister from "./pages/FairRegister";
 import Fairs from "./pages/Fairs";
 import Login from "./pages/Login";
+import ProductRegister from "./pages/ProductRegister";
 import Seller from "./pages/Seller";
 import Troller from "./pages/Troller";
 import UserRegister from "./pages/UserRegister";
@@ -19,8 +20,6 @@ export default function Routes() {
       <Route path="/carrinho" component={Troller} />
       <Route path="/registrar" component={UserRegister} />
       <Route path="/feira/:id" component={Fair} />
-      <Route path="/perfilbuyer" component={Buyer} />
-      <Route path="/perfilseller" component={Seller} />
       {/* <BuyerRoute path="/perfil"> */}
       <Route path="/perfil">
         <Buyer />
@@ -33,6 +32,9 @@ export default function Routes() {
       {/* </SellerRoute> */}
       <SellerRoute path="/cadastrar-feira">
         <FairRegister />
+      </SellerRoute>
+      <SellerRoute path="/cadastrar-produto/:id">
+        <ProductRegister />
       </SellerRoute>
       <BuyerRoute path="/compra">
         <Checkout />

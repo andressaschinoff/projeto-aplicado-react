@@ -8,6 +8,9 @@ import {
   IFairHelpers,
   IFairState,
   ILoginState,
+  IProductError,
+  IProductHelpers,
+  IProductState,
   IUserError,
   IUserHelperText,
   IUserRegisterState,
@@ -121,6 +124,24 @@ const defaultFairHelpers: IFairHelpers = {
   addressNumber: "",
 };
 
+const defaultProductErros: IProductError = {
+  name: false,
+  fair: false,
+  price: false,
+  type: false,
+  unit: false,
+  unitQuantity: false,
+};
+
+const defaultProductHelpers: IProductHelpers = {
+  fair: "",
+  name: "",
+  price: "",
+  type: "",
+  unit: "",
+  unitQuantity: "",
+};
+
 const defaultTroller: ITroller = {
   id: "",
   active: true,
@@ -134,6 +155,18 @@ const defaultProduct: IProduct = {
   name: "",
   type: "",
   unitsOfMeasure: "",
+  price: 0,
+  fair: defaultFair,
+};
+
+const defaultProductState: IProductState = {
+  name: "",
+  type: "",
+  unit: "",
+  unitQuantity: 0,
+  unitsOfMeasure: "",
+  countInStock: 0,
+  description: "",
   price: 0,
   fair: defaultFair,
 };
@@ -161,5 +194,8 @@ export {
   defaultLogin,
   defaultTroller,
   defaultProduct,
+  defaultProductState,
+  defaultProductErros,
+  defaultProductHelpers,
   weekdays,
 };

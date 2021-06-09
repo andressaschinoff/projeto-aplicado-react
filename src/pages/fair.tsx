@@ -184,8 +184,8 @@ const Fair: React.FC = () => {
             {signed && user.role === "seller" && (
               <ProductContainer>
                 <IconButton
-                  component={Link}
-                  to="/product-regiter"
+                  // component={Link}
+                  // to={`cadastrar-produto/${currentFair.id}`}
                   color="primary"
                 >
                   <Avatar
@@ -200,7 +200,7 @@ const Fair: React.FC = () => {
                     <Typography
                       component={Link}
                       color="inherit"
-                      to="/product-regiter"
+                      to={`/cadastrar-produto/${currentFair.id}`}
                       variant="h6"
                     >
                       Adicione um novo produto

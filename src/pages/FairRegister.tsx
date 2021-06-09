@@ -107,6 +107,7 @@ export function FairRegister() {
     }
     addressRef.current?.clearAddressInfo();
     setStates(defaultFairStates);
+
     Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
 
     history.push("/");

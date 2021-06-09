@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -10,261 +11,380 @@ import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
 import Typography from "@material-ui/core/Typography";
 
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-
 import {
-  IAddressFunctions,
-  IFairHelpers,
-  IFairState,
-  IFairError,
+  IProductState,
+  IProductError,
+  IProductHelpers,
+  IImageUploadFunctions,
 } from "../helpers/interfaces";
 import {
-  defaultFairStates,
-  defaultFairHelpers,
-  defaultFairErros,
-  weekdays,
+  defaultProductErros,
+  defaultProductHelpers,
+  defaultProductState,
 } from "../helpers/defaults";
 
 import { FormContainer, useRegisterStyle } from "../styles/register.style";
 import { useMainStyle } from "../styles/main.style";
 
-import AddressComponent from "../components/Address.component";
 import { useTypes } from "../hooks/useTypes";
-import { IFairCreate, useFair } from "../hooks/useFair";
-import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
+import { IProductCreate, useProduct } from "../hooks/useProduct";
+import { useFair } from "../hooks/useFair";
+import { useImageUpload } from "../hooks/useImageUpload";
+import ImageUpload from "../components/ImageUpload";
 
-export function FairRegister() {
-  const addressRef = useRef<IAddressFunctions>(null);
+export function ProductRegister() {
+  const { pathname } = useLocation();
   const history = useHistory();
   const { types } = useTypes();
-  const { create } = useFair();
+  const { create } = useProduct();
+  const { upload } = useImageUpload();
+  const { getOne } = useFair();
+
+  const imageUploadRef = useRef<IImageUploadFunctions>(null);
+
+  const [fairId, setFairId] = useState("");
+  const [states, setStates] = useState<IProductState>(defaultProductState);
+  const [helpers, setHelpers] = useState<IProductHelpers>(
+    defaultProductHelpers
+  );
+  const [errors, setErrors] = useState<IProductError>(defaultProductErros);
+
   const classes = useRegisterStyle();
-  const mainClasses = useMainStyle();
-  const [states, setStates] = useState<IFairState>(defaultFairStates);
-  const [helperTexts, setHelperTexts] =
-    useState<IFairHelpers>(defaultFairHelpers);
-  const [errors, setErrors] = useState<IFairError>(defaultFairErros);
+
   type StateType = keyof typeof states;
 
+  useEffect(() => {
+    const id = pathname.split("/cadastrar-produto/")[1];
+    setFairId(id);
+    //   const currentId = pathname.split("/cadastrar-produto/")[1];
+    //   (async () => {
+    //     const { data, status } = await getOne(currentId);
+    //     if (status !== 200) {
+    //       return;
+    //     }
+    //     setStates({ ...states, fair: data });
+    //   })();
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleChange =
-    (prop: keyof IFairState) =>
+    (prop: keyof IProductState) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target as HTMLInputElement;
       setStates({ ...states, [prop]: value });
-      setHelperTexts({ ...helperTexts, [prop]: "" });
+      setHelpers({ ...helpers, [prop]: "" });
       setErrors({ ...errors, [prop]: false });
     };
 
-  const handleCheckboxChange =
-    (prop: keyof IFairState) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { name } = event.target;
-      const current = states[prop];
-      if (typeof current === "object") {
-        const newArray = current.includes(name)
-          ? current.filter((s) => s !== name)
-          : [...current, name];
-
-        setStates({ ...states, [prop]: [...newArray] });
-      }
-    };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const hasAddressError = addressRef.current?.checkAddressErrors();
+  const createProduct = async () => {
+    const imageFile = imageUploadRef.current?.getImage();
     const hasError = checkErrors();
-    if (hasError || hasAddressError) {
+    if (hasError) {
+      return false;
+    }
+
+    const fairData = await getOne(fairId);
+    if (fairData.status >= 300) {
+      Swal.fire(
+        "Ops",
+        "Ocorreu algum erro ao criar seu produto, por favor tente mais tarde!",
+        "error"
+      );
       return;
     }
 
-    const formatterAddress = !addressRef.current?.getAddressInfo()
-      ? { address: "", zipcode: "" }
-      : addressRef.current?.getAddressInfo();
-
-    const fair: IFairCreate = {
-      address: formatterAddress.address,
-      closing: states.closing,
-      deliveryPrice: states.deliveryPrice,
+    const product: IProductCreate = {
+      fair: fairData.data,
       name: states.name,
-      opening: states.opening,
-      types: states.types,
-      weekdays: states.weekdays,
-      zipcode: formatterAddress.zipcode,
+      price: states.price,
+      type: states.type,
+      unitsOfMeasure: `${states.unitQuantity} ${states.unit}`,
+      countInStock: states.countInStock,
     };
-    const { status } = await create(fair);
 
-    if (status >= 200 && status < 300) {
-      addressRef.current?.clearAddressInfo();
-      setStates(defaultFairStates);
-      Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
+    if (!!imageFile) {
+      const imageUpload = await upload(imageFile);
 
-      history.push("/");
+      if (imageUpload.data.success === false && imageUpload.status !== 400) {
+        Swal.fire(
+          "Ops",
+          "Ocorreu algum erro ao fazer upload da sua imagem, por favor tente mais tarde!",
+          "error"
+        );
+        return false;
+      }
+
+      const { filename } = imageUpload.data;
+      product.image = filename;
     }
+
+    const { status } = await create(product);
+
+    if (status >= 300) {
+      return false;
+    }
+    Swal.fire("Eba!", "Seu produto foi criado com sucesso!", "success");
+
+    setStates(defaultProductState);
+    imageUploadRef.current?.clearImage();
+    return true;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const isCreated = await createProduct();
+
+    if (!isCreated) {
+      return;
+    }
+
+    handleGoBack();
+  };
+
+  const handleGoBack = () => {
+    history.goBack();
   };
 
   const checkErrors = () => {
     let newErrors = errors;
-    let newHelpers = helperTexts;
+    let newHelpers = helpers;
     let hasError = false;
+    const mandatories = Object.keys(errors);
     Object.keys(states).forEach((key) => {
       const value = states[key as StateType];
-      if (typeof value === "string") {
-        const cleanValue = value.replace(/[-.()]/g, "").trim();
-        if (!cleanValue) {
-          newErrors = { ...newErrors, [key]: true };
-          newHelpers = {
-            ...newHelpers,
-            [key]: "Campo obrigatório.",
-          };
-          hasError = true;
-        }
+      const isMandatory = !!mandatories.includes(key);
+      if (typeof value === "string" && isMandatory && value === "") {
+        newErrors = { ...newErrors, [key]: true };
+        newHelpers = {
+          ...newHelpers,
+          [key]: "Campo obrigatório.",
+        };
+        console.log(key);
+        console.log(value);
+        hasError = true;
       }
     });
     setErrors(newErrors);
-    setHelperTexts(newHelpers);
+    setHelpers(newHelpers);
     return hasError;
   };
 
   return (
     <FormContainer onSubmit={handleSubmit}>
-      <FormControl fullWidth error={errors.name} variant="outlined">
-        <FormLabel id="user-name-register" component="legend">
-          Nome
-        </FormLabel>
-        <OutlinedInput
-          id="user-name-register"
-          value={states.name}
-          autoFocus
-          onChange={handleChange("name")}
-          aria-describedby="user-name-register"
-          inputProps={{
-            "aria-label": "name",
-          }}
-          labelWidth={0}
-        />
-        <FormHelperText>{helperTexts.name}</FormHelperText>
-      </FormControl>
-      <AddressComponent ref={addressRef} />
-      <Box className={mainClasses.flexBox}>
-        <FormControl fullWidth error={errors.opening} variant="outlined">
-          <FormLabel id="user-opening-register" component="legend">
-            Abertura
-          </FormLabel>
-          <OutlinedInput
-            id="time-opening"
-            type="time"
-            value={states.opening}
-            className={classes.textField}
-            onChange={handleChange("opening")}
-            aria-describedby="user-opening-register"
-            labelWidth={0}
-            inputProps={{
-              step: 300, // 5 min
-              "aria-label": "opening",
-            }}
-          />
-          <FormHelperText>{helperTexts.opening}</FormHelperText>
-        </FormControl>
-        <FormControl fullWidth error={errors.closing} variant="outlined">
-          <FormLabel id="user-opening-register" component="legend">
-            Enceramento
-          </FormLabel>
-          <OutlinedInput
-            id="time-closing"
-            type="time"
-            value={states.closing}
-            className={classes.textField}
-            onChange={handleChange("closing")}
-            aria-describedby="user-closing-register"
-            labelWidth={0}
-            inputProps={{
-              step: 300, // 5 min
-              "aria-label": "opening",
-            }}
-          />
-          <FormHelperText>{helperTexts.closing}</FormHelperText>
-        </FormControl>
+      <Box className={classes.imageBox}>
+        <ImageUpload ref={imageUploadRef} />
+        <Box className={classes.radioBox}>
+          <FormControl
+            className={classes.element}
+            fullWidth
+            error={errors.name}
+            variant="outlined"
+          >
+            <FormLabel
+              className={classes.labelSpace}
+              id="user-name-register"
+              component="legend"
+            >
+              Nome
+            </FormLabel>
+            <OutlinedInput
+              id="user-name-register"
+              value={states.name}
+              autoFocus
+              onChange={handleChange("name")}
+              aria-describedby="user-name-register"
+              inputProps={{
+                "aria-label": "name",
+              }}
+              labelWidth={0}
+            />
+            <FormHelperText>{helpers.name}</FormHelperText>
+          </FormControl>
+          <FormControl className={classes.element} fullWidth variant="outlined">
+            <FormLabel
+              className={classes.labelSpace}
+              id="user-name-register"
+              component="legend"
+            >
+              Descrição
+            </FormLabel>
+            <OutlinedInput
+              id="user-name-register"
+              value={states.description}
+              autoFocus
+              onChange={handleChange("description")}
+              aria-describedby="user-name-register"
+              inputProps={{
+                "aria-label": "name",
+              }}
+              labelWidth={0}
+            />
+          </FormControl>
+        </Box>
       </Box>
-      <Box className={mainClasses.flexBox}>
-        <FormControl fullWidth error={errors.weekdays}>
-          <FormLabel id="user-opening-register" component="legend">
-            Dias abertos
-          </FormLabel>
-          <FormGroup className={classes.checkbox}>
-            {weekdays.map((day) => {
-              return (
-                <FormControlLabel
-                  key={day}
-                  control={
-                    <Checkbox
-                      checked={states.weekdays.includes(day)}
-                      onChange={handleCheckboxChange("weekdays")}
-                      name={day}
-                    />
-                  }
-                  label={day}
+      <Box className={classes.insideBox}>
+        <Box className={classes.insideBox}>
+          <FormControl
+            className={classes.element}
+            component="fieldset"
+            error={errors.type}
+          >
+            <FormLabel className={classes.labelSpace} component="legend">
+              Qual o tipo?
+            </FormLabel>
+            <RadioGroup
+              className={classes.radioBox}
+              aria-label="roleAnwser"
+              name="roleAnwser"
+              value={states.type}
+              onChange={handleChange("type")}
+            >
+              {types.map((type) => {
+                return (
+                  <FormControlLabel
+                    value={type}
+                    control={<Radio color="primary" />}
+                    label={type}
+                  />
+                );
+              })}
+            </RadioGroup>
+            <FormHelperText>{helpers.type}</FormHelperText>
+          </FormControl>
+          <FormControl className={classes.element} fullWidth variant="outlined">
+            <FormLabel
+              className={classes.labelSpace}
+              id="product-register-countInStock"
+              component="legend"
+            >
+              Quantidade em estoque
+            </FormLabel>
+            <OutlinedInput
+              type="number"
+              id="product-register-unitsOfMeasure"
+              value={states.countInStock}
+              onChange={handleChange("countInStock")}
+              labelWidth={0}
+            />
+          </FormControl>
+        </Box>
+        <Box className={classes.insideBox}>
+          <FormGroup className={classes.quantity}>
+            <FormLabel
+              className={classes.labelSpace}
+              id="product-register-price"
+              component="legend"
+            >
+              Quantidade pelo preço
+            </FormLabel>
+            <Box>
+              <FormControl
+                className={classes.value}
+                error={errors.unitQuantity}
+                variant="outlined"
+              >
+                <OutlinedInput
+                  id="product-register-price"
+                  type="number"
+                  value={states.unitQuantity}
+                  onChange={handleChange("unitQuantity")}
+                  labelWidth={0}
                 />
-              );
-            })}
-          </FormGroup>
-          <FormHelperText>{helperTexts.weekdays}</FormHelperText>
-        </FormControl>
-        <FormControl fullWidth error={errors.types}>
-          <FormLabel id="user-opening-register" component="legend">
-            Tipos de mercadoria
-          </FormLabel>
-          <FormGroup className={classes.checkbox}>
-            {types.map((type) => {
-              return (
-                <FormControlLabel
-                  key={type}
-                  control={
-                    <Checkbox
-                      checked={states.types.includes(type)}
-                      onChange={handleCheckboxChange("types")}
-                      name={type}
-                    />
-                  }
-                  label={type}
+              </FormControl>
+              <FormControl
+                className={classes.value}
+                error={errors.unit}
+                variant="outlined"
+              >
+                <OutlinedInput
+                  id="product-register-unitsOfMeasure"
+                  value={states.unit}
+                  placeholder="ex: kg"
+                  onChange={handleChange("unit")}
+                  labelWidth={0}
                 />
-              );
-            })}
+                <FormHelperText>
+                  {helpers.unitQuantity !== ""
+                    ? helpers.unitQuantity
+                    : helpers.unit}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+
+            <FormHelperText className={classes.labelSpace}>
+              Exemplo: 100 gramas
+            </FormHelperText>
           </FormGroup>
-          <FormHelperText>{helperTexts.types}</FormHelperText>
-        </FormControl>
+          <FormControl
+            fullWidth
+            className={classes.element}
+            error={errors.price}
+            variant="outlined"
+          >
+            <FormLabel
+              className={classes.labelSpace}
+              id="product-register-price"
+              component="legend"
+            >
+              Preço
+            </FormLabel>
+            <OutlinedInput
+              id="product-register-price"
+              type="number"
+              value={states.price}
+              onChange={handleChange("price")}
+              aria-describedby="price"
+              inputProps={{
+                "aria-label": "price",
+              }}
+              labelWidth={0}
+            />
+            <FormHelperText>{helpers.price}</FormHelperText>
+          </FormControl>
+        </Box>
       </Box>
-      <FormControl fullWidth error={errors.deliveryPrice} variant="outlined">
-        <FormLabel id="deliveryPrice" component="legend">
-          Preço da entrega
-        </FormLabel>
-        <OutlinedInput
-          id="deliveryPrice"
-          value={states.deliveryPrice}
-          autoFocus
-          onChange={handleChange("deliveryPrice")}
-          aria-describedby="deliveryPrice"
-          inputProps={{
-            "aria-label": "deliveryPrice ",
-          }}
-          labelWidth={0}
-        />
-        <FormHelperText>{helperTexts.deliveryPrice}</FormHelperText>
-      </FormControl>
-      <Box>
-        <IconButton color="primary" onClick={() => {}}>
-          <AddCircleIcon color="primary" />
-        </IconButton>
+      <Box className={classes.insideBox}>
+        <Box className={classes.insideBox}>
+          <Button
+            onClick={createProduct}
+            className={classes.element}
+            variant="outlined"
+            color="primary"
+          >
+            Cadastrar outro produto
+          </Button>
+          <Box className={classes.element}></Box>
+        </Box>
+        <Box className={classes.insideBox}></Box>
       </Box>
-      <Button type="submit" variant="contained" color="primary">
-        <Typography className={mainClasses.secondaryText} variant="body1">
-          Cadastrar
-        </Typography>
-      </Button>
+      <Box className={classes.insideBox}>
+        <Box className={classes.insideBox}></Box>
+        <Box className={classes.insideBox}>
+          <Button
+            className={classes.element}
+            onClick={handleGoBack}
+            variant="contained"
+            color="secondary"
+          >
+            Cancelar
+          </Button>
+          <Button
+            className={classes.element}
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            Cadastrar
+          </Button>
+        </Box>
+      </Box>
     </FormContainer>
   );
 }
 
-export default FairRegister;
+export default ProductRegister;

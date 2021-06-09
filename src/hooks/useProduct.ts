@@ -5,7 +5,9 @@ import { IFair } from "./useFair";
 
 export interface IProductCreate {
   name: string;
+  description?: string;
   type: string;
+  image?: string;
   price: number;
   fair: IFair;
   unitsOfMeasure: string;
@@ -14,7 +16,6 @@ export interface IProductCreate {
 
 export interface IProduct extends IProductCreate {
   id: string;
-  description?: string;
 }
 
 const useProduct = () => {

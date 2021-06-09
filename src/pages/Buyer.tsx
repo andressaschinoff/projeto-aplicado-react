@@ -11,15 +11,17 @@ import { roundedNumber } from "../helpers/functions";
 
 const Buyer: React.FC = () => {
   const { user, signed } = useContext(AuthContext);
-  const { getAllUser } = useTroller();
+  const { getAll } = useTroller();
   const classes = usePerfilStyle();
-  const [allTrollers, setAllTrollers] = useState<ITroller[]>([]);
+  const [activeTrollers, setActiveTrollers] = useState<ITroller[]>([]);
+  const [inactiveTrollers, setInactiveTrollers] = useState<ITroller[]>([]);
 
   useEffect(() => {
     if (signed && !!user) {
       (async () => {
-        const { data } = await getAllUser(user);
-        setAllTrollers(data);
+        const { data } = await getAll(user);
+        setActiveTrollers(data.actives);
+        setInactiveTrollers(data.inactives);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,17 +55,28 @@ const Buyer: React.FC = () => {
       </Box>
       <LineBreak />
       <Box className={classes.container}>
-        <Typography variant="subtitle1">Pedidos anteriores:</Typography>
-        {allTrollers.map(({ active, id, total, fair }) => {
+        <Typography variant="subtitle1">Pedido em aberto:</Typography>
+        {activeTrollers.map(({ id, total, fair }) => {
           return (
-            active === false && (
-              <Box key={id} className={classes.borderBox}>
-                <Typography variant="subtitle2">{fair?.name}</Typography>
-                <Typography variant="subtitle2">
-                  R$ {roundedNumber(total)}
-                </Typography>
-              </Box>
-            )
+            <Box key={id} className={classes.borderBox}>
+              <Typography variant="subtitle2">{fair?.name}</Typography>
+              <Typography variant="subtitle2">
+                R$ {roundedNumber(total)}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+      <Box className={classes.container}>
+        <Typography variant="subtitle1">Pedidos anteriores:</Typography>
+        {inactiveTrollers.map(({ id, total, fair }) => {
+          return (
+            <Box key={id} className={classes.borderBox}>
+              <Typography variant="subtitle2">{fair?.name}</Typography>
+              <Typography variant="subtitle2">
+                R$ {roundedNumber(total)}
+              </Typography>
+            </Box>
           );
         })}
       </Box>

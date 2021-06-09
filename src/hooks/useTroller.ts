@@ -26,6 +26,11 @@ export interface ITroller extends ITrollerCreate {
   subtotal: number;
 }
 
+export interface IGetAll {
+  actives: ITroller[];
+  inactives: ITroller[];
+}
+
 const useTroller = () => {
   const create = async (user: IUser) => {
     try {
@@ -59,23 +64,6 @@ const useTroller = () => {
     }
   };
 
-  const getEmpty = async () => {
-    try {
-      const { data, status } = await api.get("/troller/empty");
-
-      return { data, status } as {
-        data: ITroller;
-        status: number;
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        data: defaultTroller,
-        status: 400,
-      };
-    }
-  };
-
   const update = async (troller: ITroller) => {
     try {
       const { data, status } = await api.put(
@@ -96,46 +84,6 @@ const useTroller = () => {
     }
   };
 
-  const inactive = async (troller: ITroller) => {
-    try {
-      const { status } = await api.delete(`/troller/${troller?.id}`);
-
-      return { status } as {
-        status: number;
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        status: 400,
-      };
-    }
-  };
-
-  const getUserActive = async (user: IUser) => {
-    try {
-      const { data, status } = await api.get(`/troller/user/${user.id}/active`);
-
-      return { data, status } as {
-        data: ITroller;
-        status: number;
-      };
-    } catch (error) {
-      console.error(error);
-
-      try {
-        const { data, status } = await create(user);
-
-        return { data, status } as {
-          data: ITroller;
-          status: number;
-        };
-      } catch (e) {
-        console.error(error);
-        return { data: defaultTroller, status: 400 };
-      }
-    }
-  };
-
   const getOne = async (id: string) => {
     try {
       const { data, status } = await api.get(`/troller/${id}`);
@@ -150,27 +98,47 @@ const useTroller = () => {
     }
   };
 
-  const getAllUser = async (user: IUser) => {
+  const getAll = async (user: IUser) => {
     try {
-      const { data, status } = await api.get(`/troller/user/${user.id}/all`);
+      const { data, status } = await api.get(
+        `/troller/user/${user.role}/${user.id}`
+      );
 
       return { data, status } as {
-        data: ITroller[];
+        data: IGetAll;
         status: number;
       };
     } catch (error) {
       console.error(error);
-      return { data: [defaultTroller], status: 400 };
+      return {
+        data: { actives: [defaultTroller], inactives: [defaultTroller] },
+        status: 400,
+      };
+    }
+  };
+
+  const getActive = async (userId: string | null) => {
+    try {
+      const { data, status } = await api.get(`/troller/active?id=${userId}`);
+
+      return { data, status } as {
+        data: ITroller;
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: defaultTroller,
+        status: 400,
+      };
     }
   };
 
   return {
     create,
     update,
-    getEmpty,
-    inactive,
-    getUserActive,
-    getAllUser,
+    getActive,
+    getAll,
     getOne,
     checkout,
   };

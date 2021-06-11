@@ -4,8 +4,10 @@ const token = localStorage.token;
 // const { token } = ;
 // const { token } = useContext(AuthContext);
 
+export const baseURL = "http://localhost:3001/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: baseURL,
   headers: {
     "Content-type": "application/json",
   },

@@ -13,6 +13,8 @@ import Box from "@material-ui/core/Box";
 import Avatar from "@material-ui/core/Avatar";
 import { useMainStyle } from "../styles/main.style";
 import { roundedNumber } from "../helpers/functions";
+import { baseURL } from "../services/api";
+import MixedImage from "../assets/mixed.jpg";
 
 interface Props {
   product: IProduct;
@@ -25,18 +27,15 @@ export function ProductComponent({
   addProduct,
   removeProduct,
 }: Props) {
-  const { id, name, price, type, description } = product;
+  const { id, name, price, type, description, unitsOfMeasure, image } = product;
   const { typesSpacing } = useFairsStyle();
   const { largeAvatar } = useMainStyle();
 
+  const currentImage = !!image ? `${baseURL}/assets/${image}` : MixedImage;
+
   return (
     <ProductContainer>
-      <Avatar
-        alt="Product Image"
-        src="../assets/mixed.jpg"
-        // src={`../assets${`/mixed.jpg`}`}
-        className={largeAvatar}
-      />
+      <Avatar alt="Product Image" src={currentImage} className={largeAvatar} />
       <InfoProductContainer>
         <Box className={typesSpacing}>
           <Typography variant="h5">{name}</Typography>
@@ -45,6 +44,7 @@ export function ProductComponent({
           </Typography>
           {!!description && <Typography variant="h6">{description}</Typography>}
           <Typography variant="h6">R$ {roundedNumber(price)}</Typography>
+          <Typography variant="h6">{unitsOfMeasure}</Typography>
         </Box>
         <Box className={typesSpacing}>
           <IconButton

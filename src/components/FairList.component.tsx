@@ -10,7 +10,7 @@ import {
 
 interface Props {
   fair: IFair;
-  onFairSelected: (id: string) => void;
+  onFairSelected: (id: string, name: string) => void;
 }
 
 export function FairListComponent({ fair, onFairSelected }: Props) {
@@ -18,7 +18,7 @@ export function FairListComponent({ fair, onFairSelected }: Props) {
   const { star, scoreStyle, typesSpacing } = useFairsStyle();
 
   return (
-    <FairComponentMainContainer onClick={() => onFairSelected(id)}>
+    <FairComponentMainContainer onClick={() => onFairSelected(id, name)}>
       <Typography variant="h5" color="textSecondary">
         <b>{name}</b>
       </Typography>

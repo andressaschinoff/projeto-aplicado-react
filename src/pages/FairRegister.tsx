@@ -37,13 +37,16 @@ import {
 import { useMainStyle } from "../styles/main.style";
 
 import AddressComponent from "../components/Address.component";
-import LoadingContext from "../hooks/LoadingContext";
 import { useTypes } from "../hooks/useTypes";
+import { IFairCreate, useFair } from "../hooks/useFair";
+import Swal from "sweetalert2";
+import { useHistory } from "react-router-dom";
 
 export function FairRegister() {
   const addressRef = useRef<IAddressFunctions>(null);
-  const { isLoading, setIsLoading } = useContext(LoadingContext);
+  const history = useHistory();
   const { types } = useTypes();
+  const { create } = useFair();
   const classes = useRegisterStyle();
   const mainClasses = useMainStyle();
   const [states, setStates] = useState<IFairState>(defaultFairStates);
@@ -61,25 +64,21 @@ export function FairRegister() {
       setErrors({ ...errors, [prop]: false });
     };
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name } = event.target;
-    const currentWeekdays = states.weekdays;
-    const newWeekdays = currentWeekdays.includes(name)
-      ? currentWeekdays.filter((s) => s !== name)
-      : [...currentWeekdays, name];
+  const handleCheckboxChange =
+    (prop: keyof IFairState) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name } = event.target;
+      const current = states[prop];
+      if (typeof current === "object") {
+        const newArray = current.includes(name)
+          ? current.filter((s) => s !== name)
+          : [...current, name];
 
-    setStates({ ...states, weekdays: [...newWeekdays] });
-  };
+        setStates({ ...states, [prop]: [...newArray] });
+      }
+    };
 
-  // const handleSelectedFairChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const { value } = event.target as HTMLInputElement;
-  //   const fairSelected = fairs?.filter(({ name }) => name === value)[0];
-  //   setStates({ ...states, fair: fairSelected });
-  // };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const hasAddressError = addressRef.current?.checkAddressErrors();
     const hasError = checkErrors();
@@ -87,24 +86,31 @@ export function FairRegister() {
       return;
     }
 
-    const formatterAddress = addressRef.current?.getAddressInfo();
+    const formatterAddress = !addressRef.current?.getAddressInfo()
+      ? { address: "", zipcode: "" }
+      : addressRef.current?.getAddressInfo();
 
-    // const person: IUserCreate = {
-    //   cpf: states.cpf,
-    //   email: states.email,
-    //   name: states.name,
-    //   password: states.password,
-    //   role: states.role,
-    //   telephone: states.telephone,
-    //   address: formatterAddress?.address,
-    //   zipcode: formatterAddress?.zipcode,
-    // };
-    // console.log("persiste");
-    // console.log(person);
-    // addressRef.current?.clearAddressInfo();
-    // cpfRef.current?.clearCpf();
-    // celphoneRef.current?.clearCelphone();
-    // setStates(defaultUserRegister);
+    const fair: IFairCreate = {
+      address: formatterAddress.address,
+      closing: states.closing,
+      deliveryPrice: states.deliveryPrice,
+      name: states.name,
+      opening: states.opening,
+      types: states.types,
+      weekdays: states.weekdays,
+      zipcode: formatterAddress.zipcode,
+    };
+    const { status } = await create(fair);
+
+    if (status >= 300) {
+      return;
+    }
+    addressRef.current?.clearAddressInfo();
+    setStates(defaultFairStates);
+
+    Swal.fire("Eba!", "A feira foi criada com sucesso!", "success");
+
+    history.push("/");
   };
 
   const checkErrors = () => {
@@ -131,136 +137,136 @@ export function FairRegister() {
   };
 
   return (
-    <Container className={classes.mainContainer} maxWidth="md">
-      <FormContainer onSubmit={handleSubmit}>
-        <FormControl fullWidth error={errors.name} variant="outlined">
-          <FormLabel id="user-name-register" component="legend">
-            Nome
+    <FormContainer onSubmit={handleSubmit}>
+      <FormControl fullWidth error={errors.name} variant="outlined">
+        <FormLabel id="user-name-register" component="legend">
+          Nome
+        </FormLabel>
+        <OutlinedInput
+          id="user-name-register"
+          value={states.name}
+          autoFocus
+          onChange={handleChange("name")}
+          aria-describedby="user-name-register"
+          inputProps={{
+            "aria-label": "name",
+          }}
+          labelWidth={0}
+        />
+        <FormHelperText>{helperTexts.name}</FormHelperText>
+      </FormControl>
+      <AddressComponent ref={addressRef} />
+      <Box className={mainClasses.flexBox}>
+        <FormControl fullWidth error={errors.opening} variant="outlined">
+          <FormLabel id="user-opening-register" component="legend">
+            Abertura
           </FormLabel>
           <OutlinedInput
-            id="user-name-register"
-            value={states.name}
-            autoFocus
-            onChange={handleChange("name")}
-            aria-describedby="user-name-register"
-            inputProps={{
-              "aria-label": "name",
-            }}
+            id="time-opening"
+            type="time"
+            value={states.opening}
+            className={classes.textField}
+            onChange={handleChange("opening")}
+            aria-describedby="user-opening-register"
             labelWidth={0}
+            inputProps={{
+              step: 300, // 5 min
+              "aria-label": "opening",
+            }}
           />
-          <FormHelperText>{helperTexts.name}</FormHelperText>
+          <FormHelperText>{helperTexts.opening}</FormHelperText>
         </FormControl>
-        <AddressComponent ref={addressRef} />
-        <Box className={mainClasses.flexBox}>
-          <FormControl fullWidth error={errors.opening} variant="outlined">
-            <FormLabel id="user-opening-register" component="legend">
-              Abertura
-            </FormLabel>
-            <OutlinedInput
-              id="time-opening"
-              type="time"
-              value={states.opening}
-              className={classes.textField}
-              onChange={handleChange("opening")}
-              aria-describedby="user-opening-register"
-              labelWidth={0}
-              inputProps={{
-                step: 300, // 5 min
-                "aria-label": "opening",
-              }}
-            />
-            <FormHelperText>{helperTexts.opening}</FormHelperText>
-          </FormControl>
-          <FormControl fullWidth error={errors.closing} variant="outlined">
-            <FormLabel id="user-opening-register" component="legend">
-              Enceramento
-            </FormLabel>
-            <OutlinedInput
-              id="time-closing"
-              type="time"
-              value={states.closing}
-              className={classes.textField}
-              onChange={handleChange("closing")}
-              aria-describedby="user-closing-register"
-              labelWidth={0}
-              inputProps={{
-                step: 300, // 5 min
-                "aria-label": "opening",
-              }}
-            />
-            <FormHelperText>{helperTexts.closing}</FormHelperText>
-          </FormControl>
-        </Box>
-        <Box className={mainClasses.flexBox}>
-          <FormControl fullWidth error={errors.weekdays}>
-            <FormLabel id="user-opening-register" component="legend">
-              Dias abertos
-            </FormLabel>
-            <FormGroup className={classes.checkbox}>
-              {weekdays.map((day) => {
-                return (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={states.weekdays.includes(day)}
-                        onChange={handleCheckboxChange}
-                        name={day}
-                      />
-                    }
-                    label={day}
-                  />
-                );
-              })}
-            </FormGroup>
-            <FormHelperText>{helperTexts.weekdays}</FormHelperText>
-          </FormControl>
-          <FormControl fullWidth error={errors.types}>
-            <FormLabel id="user-opening-register" component="legend">
-              Tipos de mercadoria
-            </FormLabel>
-            <FormGroup className={classes.checkbox}>
-              {types.map((type) => {
-                return (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={states.types.includes(type)}
-                        onChange={handleCheckboxChange}
-                        name={type}
-                      />
-                    }
-                    label={type}
-                  />
-                );
-              })}
-            </FormGroup>
-            <FormHelperText>{helperTexts.types}</FormHelperText>
-          </FormControl>
-        </Box>
-        <FormControl fullWidth error={errors.deliveryPrice} variant="outlined">
-          <FormLabel id="deliveryPrice" component="legend">
-            Preço da entrega
+        <FormControl fullWidth error={errors.closing} variant="outlined">
+          <FormLabel id="user-opening-register" component="legend">
+            Enceramento
           </FormLabel>
           <OutlinedInput
-            id="deliveryPrice"
-            value={states.deliveryPrice}
-            autoFocus
-            onChange={handleChange("deliveryPrice")}
-            aria-describedby="deliveryPrice"
-            inputProps={{
-              "aria-label": "deliveryPrice ",
-            }}
+            id="time-closing"
+            type="time"
+            value={states.closing}
+            className={classes.textField}
+            onChange={handleChange("closing")}
+            aria-describedby="user-closing-register"
             labelWidth={0}
+            inputProps={{
+              step: 300, // 5 min
+              "aria-label": "opening",
+            }}
           />
-          <FormHelperText>{helperTexts.deliveryPrice}</FormHelperText>
+          <FormHelperText>{helperTexts.closing}</FormHelperText>
         </FormControl>
-        <Button type="submit" variant="contained" color="primary">
-          <Typography className={mainClasses.secondaryText} variant="body1">
-            Cadastrar
-          </Typography>
-        </Button>
-      </FormContainer>
-    </Container>
+      </Box>
+      <Box className={mainClasses.flexBox}>
+        <FormControl fullWidth error={errors.weekdays}>
+          <FormLabel id="user-opening-register" component="legend">
+            Dias abertos
+          </FormLabel>
+          <FormGroup className={classes.checkbox}>
+            {weekdays.map((day) => {
+              return (
+                <FormControlLabel
+                  key={day}
+                  control={
+                    <Checkbox
+                      checked={states.weekdays.includes(day)}
+                      onChange={handleCheckboxChange("weekdays")}
+                      name={day}
+                    />
+                  }
+                  label={day}
+                />
+              );
+            })}
+          </FormGroup>
+          <FormHelperText>{helperTexts.weekdays}</FormHelperText>
+        </FormControl>
+        <FormControl fullWidth error={errors.types}>
+          <FormLabel id="user-opening-register" component="legend">
+            Tipos de mercadoria
+          </FormLabel>
+          <FormGroup className={classes.checkbox}>
+            {types.map((type) => {
+              return (
+                <FormControlLabel
+                  key={type}
+                  control={
+                    <Checkbox
+                      checked={states.types.includes(type)}
+                      onChange={handleCheckboxChange("types")}
+                      name={type}
+                    />
+                  }
+                  label={type}
+                />
+              );
+            })}
+          </FormGroup>
+          <FormHelperText>{helperTexts.types}</FormHelperText>
+        </FormControl>
+      </Box>
+      <FormControl fullWidth error={errors.deliveryPrice} variant="outlined">
+        <FormLabel id="deliveryPrice" component="legend">
+          Preço da entrega
+        </FormLabel>
+        <OutlinedInput
+          id="deliveryPrice"
+          value={states.deliveryPrice}
+          autoFocus
+          onChange={handleChange("deliveryPrice")}
+          aria-describedby="deliveryPrice"
+          inputProps={{
+            "aria-label": "deliveryPrice ",
+          }}
+          labelWidth={0}
+        />
+        <FormHelperText>{helperTexts.deliveryPrice}</FormHelperText>
+      </FormControl>
+      <Button type="submit" variant="contained" color="primary">
+        <Typography className={mainClasses.secondaryText} variant="body1">
+          Cadastrar
+        </Typography>
+      </Button>
+    </FormContainer>
   );
 }
 

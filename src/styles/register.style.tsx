@@ -14,6 +14,7 @@ const FormContainer = styled.form`
   max-width: 80vw;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-height: calc(100vh - 200px);
   padding: 30px 70px;
   border-radius: 20px;
@@ -27,10 +28,6 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
     alignItems: "center",
     width: 400,
   },
-  mainContainer: {
-    paddingTop: "40px",
-    paddingBottom: "40px",
-  },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
@@ -40,6 +37,7 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
     display: "flex",
     flexDirection: "row",
   },
+  labelSpace: { marginBottom: "10px", marginLeft: "10px" },
   btwBox: {
     margin: "2rem",
   },
@@ -49,6 +47,31 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
   },
   boxSpace: {
     marginLeft: "15px",
+  },
+  quantity: {
+    display: "flex",
+    marginLeft: "20px",
+    width: "100%",
+  },
+  value: {
+    maxWidth: "125px",
+  },
+  element: {
+    marginLeft: "20px",
+    width: "100%",
+  },
+  insideBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+  },
+  radioBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+  },
+  imageBox: {
+    display: "flex",
   },
 }));
 

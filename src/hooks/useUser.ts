@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
-import { defaultTroller, defaultUser } from "../helpers/defaults";
+import { defaultUser } from "../helpers/defaults";
 import { api } from "../services/api";
+import { IFair } from "./useFair";
 import { ITroller } from "./useTroller";
 
 export interface IUserCreate {
@@ -12,12 +13,12 @@ export interface IUserCreate {
   telephone: string;
   zipcode?: string;
   address?: string;
+  fair?: IFair;
 }
 
 export interface IUser extends IUserCreate {
   id: string;
   trollers?: ITroller[];
-  fair?: ITroller;
 }
 
 const useUser = () => {
@@ -30,7 +31,7 @@ const useUser = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Swal.fire(
         "Ops!",
         "Ocorreu algum erro na criação do seu usuário, tente novamente mais tarde!",

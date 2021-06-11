@@ -1,15 +1,24 @@
-import axios from 'axios';
+import axios from "axios";
 
-//const {token} = loginContext();
+const token = localStorage.token;
+// const { token } = ;
+// const { token } = useContext(AuthContext);
+
+export const baseURL = "http://localhost:3001/api";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: baseURL,
   headers: {
-    'Content-type': 'application/json',
+    "Content-type": "application/json",
   },
+  timeout: 10000,
 });
 
-//api.defaults.headers.authorization = !!token ? `Bearer ${token}` : "";
+export const imageApi = axios.create({
+  baseURL: "http://localhost:3001/api/image",
+});
+
+// api.defaults.headers.authorization = !!token ? `Bearer ${token}` : "";
 
 export { api };
 

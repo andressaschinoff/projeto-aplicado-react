@@ -8,6 +8,9 @@ import {
   IFairHelpers,
   IFairState,
   ILoginState,
+  IProductError,
+  IProductHelpers,
+  IProductState,
   IUserError,
   IUserHelperText,
   IUserRegisterState,
@@ -45,7 +48,7 @@ const defaultFair: IFair = {
   moneySign: 0,
 };
 
-const defaultUserRegister: IUserRegisterState = {
+const defaultUserState: IUserRegisterState = {
   cpf: "",
   email: "",
   name: "",
@@ -53,7 +56,6 @@ const defaultUserRegister: IUserRegisterState = {
   reapeatPassword: "",
   role: "",
   telephone: "",
-  fullAddress: defaultFullAddress,
   showPassword: false,
   showReapeatPassword: false,
   fair: defaultFair,
@@ -90,15 +92,12 @@ const defaultLogin: ILoginState = {
 };
 
 const defaultFairStates: IFairState = {
-  address: "",
   closing: "",
   deliveryPrice: 0,
   name: "",
   opening: "",
   types: [],
   weekdays: [],
-  zipcode: "",
-  addressNumber: "",
 };
 
 const defaultFairErros: IFairError = {
@@ -125,17 +124,51 @@ const defaultFairHelpers: IFairHelpers = {
   addressNumber: "",
 };
 
+const defaultProductErros: IProductError = {
+  name: false,
+  fair: false,
+  price: false,
+  type: false,
+  unit: false,
+  unitQuantity: false,
+};
+
+const defaultProductHelpers: IProductHelpers = {
+  fair: "",
+  name: "",
+  price: "",
+  type: "",
+  unit: "",
+  unitQuantity: "",
+};
+
 const defaultTroller: ITroller = {
   id: "",
-  active: false,
+  active: true,
+  orderItens: [{ quantity: 0 }],
+  total: 0,
+  subtotal: 0,
 };
 
 const defaultProduct: IProduct = {
   id: "",
   name: "",
   type: "",
+  unitsOfMeasure: "",
   price: 0,
-  fair: "",
+  fair: defaultFair,
+};
+
+const defaultProductState: IProductState = {
+  name: "",
+  type: "",
+  unit: "",
+  unitQuantity: 0,
+  unitsOfMeasure: "",
+  countInStock: 0,
+  description: "",
+  price: 0,
+  fair: defaultFair,
 };
 
 const weekdays = [
@@ -155,11 +188,14 @@ export {
   defaultFairErros,
   defaultFairHelpers,
   defaultFairStates,
-  defaultUserRegister,
+  defaultUserState as defaultUserRegister,
   defaultUserHelper,
   defaultUserErrors,
   defaultLogin,
   defaultTroller,
   defaultProduct,
+  defaultProductState,
+  defaultProductErros,
+  defaultProductHelpers,
   weekdays,
 };

@@ -1,26 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import {
   MenuItemsHeader,
   MenuItemsOptions,
 } from "../../styles/menu-bar/menu-items.style";
 
-import { useMenuStyle } from "../../styles/menu-bar/menu-bar.style";
 import TrollerContext from "../../hooks/TrollerContext";
 import AuthContext from "../../hooks/AuthContext";
 
 export function MenuItems() {
-  const { linkDefault, linkOutline } = useMenuStyle();
-  const { troller } = useContext(TrollerContext);
-  const { signed, user } = useContext(AuthContext);
+  const { push } = useHistory();
+  const { troller, setIsCheckout } = useContext(TrollerContext);
+  const { signed, user, logout } = useContext(AuthContext);
   const [quantities, setQuantities] = useState(0);
 
   useEffect(() => {
     const quantity =
-      !!troller && !!troller.products
-        ? troller.products?.reduce((acc, curr) => acc + curr.quantity, 0)
+      !!troller && !!troller.orderItens
+        ? troller.orderItens?.reduce((acc, curr) => acc + curr.quantity, 0)
         : 0;
     setQuantities(quantity);
   }, [troller]);
@@ -36,7 +36,6 @@ export function MenuItems() {
           </Button>
         </li>
         <li>
-          {console.log(signed)}
           <Button
             component={Link}
             to={signed ? "/perfil" : "/login"}
@@ -47,7 +46,6 @@ export function MenuItems() {
             </Typography>
           </Button>
         </li>
-        {console.log(signed)}
         {!signed && (
           <li>
             <Button
@@ -77,6 +75,18 @@ export function MenuItems() {
           </li>
         )}
       </MenuItemsOptions>
+      {signed && (
+        <IconButton
+          color="primary"
+          onClick={() => {
+            setIsCheckout(false);
+            logout();
+            push("/");
+          }}
+        >
+          <ExitToAppIcon fontSize="large" color="error" />
+        </IconButton>
+      )}
       <IconButton component={Link} to="/carrinho" color="primary">
         <ShoppingCartIcon fontSize="large" color="primary" />
         {quantities > 0 && (

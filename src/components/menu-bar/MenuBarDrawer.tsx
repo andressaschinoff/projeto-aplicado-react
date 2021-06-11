@@ -1,17 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Drawer, Typography } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { MenuDrawerContainer } from "../../styles/menu-bar/menu-drawer.style";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import TrollerContext from "../../hooks/TrollerContext";
 import AuthContext from "../../hooks/AuthContext";
-import Routes from "../../routes";
-import Fairs from "../../pages/Fairs";
-import Fair from "../../pages/Fair";
-import UserRegister from "../../pages/UserRegister";
-import FairRegister from "../../pages/FairRegister";
-import Login from "../../pages/Login";
 
 export interface Props {
   open: boolean;
@@ -20,14 +15,15 @@ export interface Props {
 
 function MenuDrawer(props: Props) {
   const { open, onClose } = props;
-  const { troller } = useContext(TrollerContext);
-  const { signed, user } = useContext(AuthContext);
+  const { push } = useHistory();
+  const { troller, setIsCheckout } = useContext(TrollerContext);
+  const { signed, user, logout } = useContext(AuthContext);
   const [quantities, setQuantities] = useState(0);
 
   useEffect(() => {
     const quantity =
-      !!troller && !!troller.products
-        ? troller.products?.reduce((acc, curr) => acc + curr.quantity, 0)
+      !!troller && !!troller.orderItens
+        ? troller.orderItens?.reduce((acc, curr) => acc + curr.quantity, 0)
         : 0;
     setQuantities(quantity);
   }, [troller]);
@@ -43,7 +39,6 @@ function MenuDrawer(props: Props) {
             Home
           </Typography>
         </Button>
-        {console.log(signed)}
         <Button
           color="secondary"
           component={Link}
@@ -54,7 +49,6 @@ function MenuDrawer(props: Props) {
             {signed ? "Perfil" : "Login"}
           </Typography>
         </Button>
-        {console.log(signed)}
         {!signed && (
           <Button
             variant="outlined"
@@ -80,6 +74,18 @@ function MenuDrawer(props: Props) {
               Cadastrar Feira?
             </Typography>
           </Button>
+        )}
+        {signed && (
+          <IconButton
+            onClick={() => {
+              onClose();
+              setIsCheckout(false);
+              logout();
+              push("/");
+            }}
+          >
+            <ExitToAppIcon fontSize="large" color="error" />
+          </IconButton>
         )}
         <IconButton
           component={Link}

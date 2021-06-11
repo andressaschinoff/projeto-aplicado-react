@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
+import Container from "@material-ui/core/Container";
 import MenuBar from "../components/menu-bar/MenuBar";
 import {
   LandingFairContainer,
@@ -7,14 +8,18 @@ import {
 } from "../styles/fairs/fairs.style";
 
 import Routes from "../routes";
+import { useMainStyle } from "../styles/main.style";
 
 function Home() {
+  const { mainContainer } = useMainStyle();
   return (
     <Router>
       <LandingMainContainer>
         <MenuBar />
         <LandingFairContainer>
-          <Routes />
+          <Container className={mainContainer} maxWidth="lg">
+            <Routes />
+          </Container>
         </LandingFairContainer>
       </LandingMainContainer>
     </Router>

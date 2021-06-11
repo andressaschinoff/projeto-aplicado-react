@@ -2,20 +2,33 @@ import api from "../services/api";
 import { IUser } from "./useUser";
 import { IProduct } from "./useProduct";
 import { defaultTroller } from "../helpers/defaults";
+import { IFair } from "./useFair";
 
 export interface ITrollerCreate {
-  products?: IProducts[];
+  orderItens?: IOrderItem[];
   user?: IUser;
 }
 
-export interface IProducts {
+export interface IOrderItem {
+  id?: string;
   quantity: number;
   product?: IProduct;
+  total?: number;
 }
 
 export interface ITroller extends ITrollerCreate {
   id: string;
-  active?: boolean;
+  fair?: IFair;
+  orderNumber?: number;
+  sellers?: IUser;
+  active: boolean;
+  total: number;
+  subtotal: number;
+}
+
+export interface IGetAll {
+  actives: ITroller[];
+  inactives: ITroller[];
 }
 
 const useTroller = () => {
@@ -29,7 +42,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         data: defaultTroller,
         status: 400,
@@ -37,20 +50,17 @@ const useTroller = () => {
     }
   };
 
-  const getEmpty = async () => {
+  const checkout = async (id: string, paymentInfo: {}) => {
     try {
-      const { data, status } = await api.get("/troller/empty");
+      const { data, status } = await api.post(
+        `/troller/checkout/${id}`,
+        paymentInfo
+      );
 
-      return { data, status } as {
-        data: ITroller;
-        status: number;
-      };
+      return { data, status } as { data: ITroller; status: number };
     } catch (error) {
-      console.log(error);
-      return {
-        data: defaultTroller,
-        status: 400,
-      };
+      console.error(error);
+      return { data: defaultTroller, status: 400 };
     }
   };
 
@@ -66,7 +76,7 @@ const useTroller = () => {
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: 400,
         data: troller,
@@ -74,47 +84,64 @@ const useTroller = () => {
     }
   };
 
-  const inactive = async (troller: ITroller) => {
+  const getOne = async (id: string) => {
     try {
-      const { status } = await api.delete(`/troller/${troller?.id}`);
-
-      return { status } as {
-        status: number;
-      };
-    } catch (error) {
-      console.log(error);
-      return {
-        status: 400,
-      };
-    }
-  };
-
-  const getActive = async (user: IUser) => {
-    try {
-      const { data, status } = await api.get(`/troller/user/${user.id}`);
+      const { data, status } = await api.get(`/troller/${id}`);
 
       return { data, status } as {
         data: ITroller;
         status: number;
       };
     } catch (error) {
-      console.log(error);
-
-      try {
-        const { data, status } = await create(user);
-
-        return { data, status } as {
-          data: ITroller;
-          status: number;
-        };
-      } catch (e) {
-        console.log(error);
-        return { data: defaultTroller, status: 400 };
-      }
+      console.error(error);
+      return { data: defaultTroller, status: 400 };
     }
   };
 
-  return { create, update, getEmpty, inactive, getActive };
+  const getAll = async (user: IUser) => {
+    try {
+      const { data, status } = await api.get(
+        `/troller/user/${user.role}/${user.id}`
+      );
+
+      return { data, status } as {
+        data: IGetAll;
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: { actives: [defaultTroller], inactives: [defaultTroller] },
+        status: 400,
+      };
+    }
+  };
+
+  const getActive = async (userId: string | null) => {
+    try {
+      const { data, status } = await api.get(`/troller/active?id=${userId}`);
+
+      return { data, status } as {
+        data: ITroller;
+        status: number;
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: defaultTroller,
+        status: 400,
+      };
+    }
+  };
+
+  return {
+    create,
+    update,
+    getActive,
+    getAll,
+    getOne,
+    checkout,
+  };
 };
 
 export { useTroller };

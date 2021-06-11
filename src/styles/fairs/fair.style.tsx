@@ -10,10 +10,9 @@ const FairRowBox = styled(Box)`
 `;
 
 const ProductsContainer = styled(Box)`
-  width: 100vw;
-  margin: 0 auto;
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   column-gap: 50px;
 
   @media (max-width: 600px) {
@@ -23,6 +22,14 @@ const ProductsContainer = styled(Box)`
 `;
 
 const ProductContainer = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+`;
+
+const InfoProductContainer = styled(Box)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -41,4 +48,10 @@ const useFairStyle = makeStyles((theme: Theme) => ({
   },
 }));
 
-export { FairRowBox, ProductsContainer, ProductContainer, useFairStyle };
+export {
+  FairRowBox,
+  InfoProductContainer,
+  ProductsContainer,
+  ProductContainer,
+  useFairStyle,
+};

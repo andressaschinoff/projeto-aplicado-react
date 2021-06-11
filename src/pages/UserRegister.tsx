@@ -36,18 +36,18 @@ import { useMainStyle } from "../styles/main.style";
 import AddressComponent from "../components/Address.component";
 import CpfInput from "../components/CpfInput";
 import { IUserCreate, useUser } from "../hooks/useUser";
-import LoadingContext from "../hooks/LoadingContext";
 import CelphoneInput from "../components/CelphoneInput";
 import { IFair, useFair } from "../hooks/useFair";
+import { useHistory } from "react-router";
 
 export function UserRegister() {
+  const history = useHistory();
   const addressRef = useRef<IAddressFunctions>(null);
   const cpfRef = useRef<ICpfFunctions>(null);
   const celphoneRef = useRef<ICelphoneFunctions>(null);
-  const { isLoading, setIsLoading } = useContext(LoadingContext);
   const { getAll } = useFair();
   const { create } = useUser();
-  const { mainContainer, spaceButtons, boxSpace } = useRegisterStyle();
+  const { spaceButtons, boxSpace } = useRegisterStyle();
   const { secondaryText, flexBox } = useMainStyle();
   const [fairs, setFairs] = useState<IFair[]>();
   const [filterFairs, setFilterFairs] = useState<IFair[]>();
@@ -80,7 +80,9 @@ export function UserRegister() {
   const handleFairChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
     setStates({ ...states, fairName: value });
-    const fairSelecteds = fairs?.filter(({ name }) => name.includes(value));
+    const fairSelecteds = fairs?.filter(({ name }) =>
+      name.toLocaleLowerCase().includes(value)
+    );
     setFilterFairs(fairSelecteds);
   };
 
@@ -88,7 +90,7 @@ export function UserRegister() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { value } = event.target as HTMLInputElement;
-    const fairSelected = fairs?.filter(({ name }) => name === value)[0];
+    const fairSelected = fairs?.find(({ id }) => id === value);
     setStates({ ...states, fair: fairSelected });
   };
 
@@ -139,16 +141,23 @@ export function UserRegister() {
       telephone: states.telephone,
       address: formatterAddress?.address,
       zipcode: formatterAddress?.zipcode,
+      fair: states?.fair?.id !== "" ? states?.fair : undefined,
     };
-    const { data, status } = await create(person);
-    console.log(data);
-    if (status >= 200 && status < 300) {
-      addressRef.current?.clearAddressInfo();
-      cpfRef.current?.clearCpf();
-      celphoneRef.current?.clearCelphone();
-      setStates(defaultUserRegister);
-      Swal.fire("Eba!", "Seu usuário foi criado com sucesso!", "success");
+    const { status } = await create(person);
+    if (status >= 300) {
+      return;
     }
+    addressRef.current?.clearAddressInfo();
+    cpfRef.current?.clearCpf();
+    celphoneRef.current?.clearCelphone();
+    setStates(defaultUserRegister);
+    Swal.fire(
+      "Eba!",
+      "Seu usuário foi criado com sucesso! Faça login para acessar mais funcionalidades.",
+      "success"
+    );
+
+    history.push("/login");
   };
 
   const checkErrors = () => {
@@ -168,7 +177,6 @@ export function UserRegister() {
           hasError = true;
         }
       }
-      console.log("here goes check to fair");
     });
     setErrors(newErrors);
     setHelperTexts(newHelpers);
@@ -176,213 +184,209 @@ export function UserRegister() {
   };
 
   return (
-    <Container className={mainContainer} maxWidth="md">
-      <FormContainer onSubmit={handleSubmit}>
-        <FormControl fullWidth error={errors.name} variant="outlined">
-          <FormLabel id="user-name-register" component="legend">
-            Nome
+    <FormContainer onSubmit={handleSubmit}>
+      <FormControl fullWidth error={errors.name} variant="outlined">
+        <FormLabel id="user-name-register" component="legend">
+          Nome
+        </FormLabel>
+        <OutlinedInput
+          id="user-name-register"
+          value={states.name}
+          autoFocus
+          onChange={handleChange("name")}
+          aria-describedby="user-name-register"
+          inputProps={{
+            "aria-label": "name",
+          }}
+          labelWidth={0}
+        />
+        <FormHelperText>{helperTexts.name}</FormHelperText>
+      </FormControl>
+      <Box className={flexBox}>
+        <CpfInput
+          id="user-cpf-input"
+          label="CPF"
+          ref={cpfRef}
+          error={errors.cpf}
+          helperText={helperTexts.cpf}
+          onChange={handleChange("cpf")}
+        />
+        <FormControl fullWidth error={errors.email} variant="outlined">
+          <FormLabel id="user-email-register" component="legend">
+            Email
           </FormLabel>
           <OutlinedInput
-            id="user-name-register"
-            value={states.name}
-            autoFocus
-            onChange={handleChange("name")}
-            aria-describedby="user-name-register"
+            id="outlined-adornment-email"
+            value={states.email}
+            onChange={handleChange("email")}
+            aria-describedby="user-email-register"
             inputProps={{
-              "aria-label": "name",
+              "aria-label": "email",
             }}
             labelWidth={0}
           />
-          <FormHelperText>{helperTexts.name}</FormHelperText>
+          <FormHelperText>{helperTexts.email}</FormHelperText>
         </FormControl>
-        <Box className={flexBox}>
-          <CpfInput
-            id="user-cpf-input"
-            label="CPF"
-            ref={cpfRef}
-            error={errors.cpf}
-            helperText={helperTexts.cpf}
-            onChange={handleChange("cpf")}
+      </Box>
+      <Box className={flexBox}>
+        <FormControl fullWidth error={errors.password} variant="outlined">
+          <FormLabel id="outlined-adornment-password" component="legend">
+            Senha
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-password"
+            type={states.showPassword ? "text" : "password"}
+            value={states.password}
+            onChange={handleChange("password")}
+            endAdornment={
+              <InputAdornment component="i" position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword("showPassword")}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {states.showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            }
+            labelWidth={0}
           />
-          <FormControl fullWidth error={errors.email} variant="outlined">
+          <FormHelperText>{helperTexts.password}</FormHelperText>
+        </FormControl>
+        <FormControl
+          fullWidth
+          error={errors.reapeatPassword}
+          variant="outlined"
+        >
+          <FormLabel id="outlined-adornment-repeat-password" component="legend">
+            Confirme a senha
+          </FormLabel>
+          <OutlinedInput
+            id="outlined-adornment-repassword"
+            type={states.showReapeatPassword ? "text" : "password"}
+            value={states.reapeatPassword}
+            onChange={handleChange("reapeatPassword")}
+            endAdornment={
+              <InputAdornment component="i" position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword("showReapeatPassword")}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {states.showReapeatPassword ? (
+                    <Visibility />
+                  ) : (
+                    <VisibilityOff />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            }
+            labelWidth={0}
+          />
+          <FormHelperText>{helperTexts.reapeatPassword}</FormHelperText>
+        </FormControl>
+      </Box>
+      <CelphoneInput
+        id="user-celphone"
+        ref={celphoneRef}
+        label="Celular"
+        error={errors.telephone}
+        helperText={helperTexts.telephone}
+        onChange={handleChange("telephone")}
+      />
+      <Box className={flexBox}>
+        <FormControl
+          className={`${boxSpace} ${spaceButtons}`}
+          component="fieldset"
+          error={errors.role}
+        >
+          <FormLabel component="legend">Quem você é?</FormLabel>
+          <RadioGroup
+            aria-label="roleAnwser"
+            name="roleAnwser"
+            value={states.role}
+            onChange={handleChange("role")}
+          >
+            <FormControlLabel
+              value="buyer"
+              control={<Radio color="primary" />}
+              label="Comprador"
+            />
+            <FormControlLabel
+              value="seller"
+              control={<Radio color="primary" />}
+              label="Feirante"
+            />
+          </RadioGroup>
+          <FormHelperText>{helperTexts.role}</FormHelperText>
+        </FormControl>
+        {states?.role === "seller" && (
+          <FormControl
+            className={`${boxSpace} ${spaceButtons}`}
+            fullWidth
+            variant="outlined"
+          >
             <FormLabel id="user-email-register" component="legend">
-              Email
+              Feira
             </FormLabel>
             <OutlinedInput
               id="outlined-adornment-email"
-              value={states.email}
-              onChange={handleChange("email")}
+              value={states?.fairName}
+              onChange={handleFairChange}
               aria-describedby="user-email-register"
               inputProps={{
                 "aria-label": "email",
               }}
               labelWidth={0}
             />
-            <FormHelperText>{helperTexts.email}</FormHelperText>
+            {filterFairs?.length === 0 && states?.fairName !== "" && (
+              <FormHelperText>
+                Feira não encontrada. Verifique o nome e tente novamente.
+              </FormHelperText>
+            )}
           </FormControl>
-        </Box>
-        <Box className={flexBox}>
-          <FormControl fullWidth error={errors.password} variant="outlined">
-            <FormLabel id="outlined-adornment-password" component="legend">
-              Senha
-            </FormLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type={states.showPassword ? "text" : "password"}
-              value={states.password}
-              onChange={handleChange("password")}
-              endAdornment={
-                <InputAdornment component="i" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword("showPassword")}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {states.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              labelWidth={0}
-            />
-            <FormHelperText>{helperTexts.password}</FormHelperText>
-          </FormControl>
-          <FormControl
-            fullWidth
-            error={errors.reapeatPassword}
-            variant="outlined"
-          >
-            <FormLabel
-              id="outlined-adornment-repeat-password"
-              component="legend"
-            >
-              Confirme a senha
-            </FormLabel>
-            <OutlinedInput
-              id="outlined-adornment-repassword"
-              type={states.showReapeatPassword ? "text" : "password"}
-              value={states.reapeatPassword}
-              onChange={handleChange("reapeatPassword")}
-              endAdornment={
-                <InputAdornment component="i" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword("showReapeatPassword")}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {states.showReapeatPassword ? (
-                      <Visibility />
-                    ) : (
-                      <VisibilityOff />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              }
-              labelWidth={0}
-            />
-            <FormHelperText>{helperTexts.reapeatPassword}</FormHelperText>
-          </FormControl>
-        </Box>
-        <CelphoneInput
-          id="user-celphone"
-          ref={celphoneRef}
-          label="Celular"
-          error={errors.telephone}
-          helperText={helperTexts.telephone}
-          onChange={handleChange("telephone")}
-        />
-        <Box className={flexBox}>
-          <FormControl
-            className={`${boxSpace} ${spaceButtons}`}
-            component="fieldset"
-            error={errors.role}
-          >
-            <FormLabel component="legend">Quem você é?</FormLabel>
+        )}
+      </Box>
+      <Box className={flexBox}>
+        {!!filterFairs && (
+          <FormControl component="fieldset" error={errors.role}>
             <RadioGroup
               aria-label="roleAnwser"
               name="roleAnwser"
-              value={states.role}
-              onChange={handleChange("role")}
+              value={states?.fair?.id}
+              onChange={handleSelectedFairChange}
             >
-              <FormControlLabel
-                value="buyer"
-                control={<Radio color="primary" />}
-                label="Comprador"
-              />
-              <FormControlLabel
-                value="seller"
-                control={<Radio color="primary" />}
-                label="Feirante"
-              />
+              {filterFairs.map(({ id, name }) => {
+                return (
+                  <FormControlLabel
+                    key={id}
+                    value={id}
+                    control={<Radio color="primary" />}
+                    label={name}
+                  />
+                );
+              })}
             </RadioGroup>
-            <FormHelperText>{helperTexts.role}</FormHelperText>
           </FormControl>
-          {states?.role === "seller" && (
-            <FormControl
-              className={`${boxSpace} ${spaceButtons}`}
-              fullWidth
-              variant="outlined"
-            >
-              <FormLabel id="user-email-register" component="legend">
-                Feira
-              </FormLabel>
-              <OutlinedInput
-                id="outlined-adornment-email"
-                value={states?.fairName}
-                onChange={handleFairChange}
-                aria-describedby="user-email-register"
-                inputProps={{
-                  "aria-label": "email",
-                }}
-                labelWidth={0}
-              />
-              {filterFairs?.length === 0 && states?.fairName !== "" && (
-                <FormHelperText>
-                  Feira não encontrada. Verifique o nome e tente novamente.
-                </FormHelperText>
-              )}
-            </FormControl>
-          )}
-        </Box>
-        <Box>
-          {!!filterFairs && (
-            <FormControl component="fieldset" error={errors.role}>
-              <RadioGroup
-                aria-label="roleAnwser"
-                name="roleAnwser"
-                value={states.role}
-                onChange={handleSelectedFairChange}
-              >
-                {filterFairs.map(({ id, name }) => {
-                  return (
-                    <FormControlLabel
-                      value={id}
-                      control={<Radio color="primary" />}
-                      label={name}
-                    />
-                  );
-                })}
-              </RadioGroup>
-            </FormControl>
-          )}
-        </Box>
-        {states?.role === "buyer" && <AddressComponent ref={addressRef} />}
-        <Button
-          className={spaceButtons}
-          type="submit"
-          variant="contained"
-          color="secondary"
-        >
-          <Typography className={secondaryText} variant="body1">
-            Cancelar
-          </Typography>
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-          <Typography className={secondaryText} variant="body1">
-            Cadastrar
-          </Typography>
-        </Button>
-      </FormContainer>
-    </Container>
+        )}
+      </Box>
+      {states?.role === "buyer" && <AddressComponent ref={addressRef} />}
+      <Button
+        className={spaceButtons}
+        type="submit"
+        variant="contained"
+        color="secondary"
+      >
+        <Typography className={secondaryText} variant="body1">
+          Cancelar
+        </Typography>
+      </Button>
+      <Button type="submit" variant="contained" color="primary">
+        <Typography className={secondaryText} variant="body1">
+          Cadastrar
+        </Typography>
+      </Button>
+    </FormContainer>
   );
 }
 

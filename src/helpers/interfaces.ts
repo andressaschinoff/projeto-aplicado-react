@@ -1,11 +1,13 @@
+import { ImageType } from "react-images-uploading";
 import { IFair, IFairCreate } from "../hooks/useFair";
 import { IFullAddress } from "../hooks/useFullAddress";
-import { IUserCreate } from "../hooks/useUser";
+import { IProductCreate } from "../hooks/useProduct";
+import { IOrderItem } from "../hooks/useTroller";
+import { IUser, IUserCreate } from "../hooks/useUser";
 
 export interface IUserRegisterState extends IUserCreate {
   password: string;
   reapeatPassword: string;
-  fullAddress?: IFullAddress;
   showPassword: boolean;
   showReapeatPassword: boolean;
   fair?: IFair;
@@ -32,8 +34,13 @@ export interface IUserHelperText {
   role: string;
 }
 
-export interface IFairState extends IFairCreate {
-  addressNumber: string;
+export interface IFairState {
+  name: string;
+  opening: string;
+  closing: string;
+  weekdays: string[];
+  deliveryPrice: number;
+  types: string[];
 }
 
 export interface IFairError {
@@ -60,6 +67,24 @@ export interface IFairHelpers {
   types: string;
 }
 
+export interface IProductError {
+  name: boolean;
+  type: boolean;
+  price: boolean;
+  fair: boolean;
+  unit: boolean;
+  unitQuantity: boolean;
+}
+
+export interface IProductHelpers {
+  name: string;
+  type: string;
+  price: string;
+  fair: string;
+  unit: string;
+  unitQuantity: string;
+}
+
 export interface IFullAddressHelper {
   zipcode: string;
   number: string;
@@ -84,6 +109,19 @@ export interface ILoginState {
   error: boolean;
 }
 
+export interface ITrollerState {
+  id: string;
+  active: boolean;
+  orderItens: IOrderItem[];
+  user?: IUser;
+  total: number;
+}
+
+export interface IProductState extends IProductCreate {
+  unit: string;
+  unitQuantity: number;
+}
+
 export interface IAddressFunctions {
   checkAddressErrors: () => boolean;
   getAddressInfo: () => IConvertAddress;
@@ -100,4 +138,9 @@ export interface ICelphoneFunctions {
 
 export interface IZipcodeFunctions {
   clearZipcode: () => void;
+}
+
+export interface IImageUploadFunctions {
+  getImage: () => ImageType;
+  clearImage: () => void;
 }

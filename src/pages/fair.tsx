@@ -1,140 +1,231 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import { useLocation } from "react-router";
-import { IFair } from "../hooks/useFair";
-import { useFairsStyle } from "../styles/fairs/fairs.style";
+import IconButton from "@material-ui/core/IconButton";
+
+import MixedImage from "../assets/mixed.jpg";
+
+import { IFair, useFair } from "../hooks/useFair";
+import { IProduct, useProduct } from "../hooks/useProduct";
+import { IOrderItem, useTroller } from "../hooks/useTroller";
+import TrollerContext from "../hooks/TrollerContext";
 
 import {
   FairRowBox,
+  InfoProductContainer,
+  ProductContainer,
   ProductsContainer,
-  useFairStyle,
 } from "../styles/fairs/fair.style";
-import { IProduct, useProduct } from "../hooks/useProduct";
-import TrollerContext from "../hooks/TrollerContext";
-import { useTroller } from "../hooks/useTroller";
+import { useFairsStyle } from "../styles/fairs/fairs.style";
+import { MainContainer, useMainStyle } from "../styles/main.style";
+
 import ProductComponent from "../components/Product.component";
 import SearchComponent from "../components/Search.component";
+import { defaultFair } from "../helpers/defaults";
+import AuthContext from "../hooks/AuthContext";
 
 const Fair: React.FC = () => {
-  const { state } = useLocation<IFair>();
-  const { update } = useTroller();
+  const { signed, user } = useContext(AuthContext);
   const { troller, setTroller } = useContext(TrollerContext);
+
+  const { pathname } = useLocation();
+  const { update } = useTroller();
   const { getAll } = useProduct();
+  const { getOne } = useFair();
+
+  const [currentFair, setCurrentFair] = useState<IFair>(defaultFair);
   const [products, setProducts] = useState<IProduct[]>([]);
-  const [trollerProducts, setTrollerProducts] = useState<IProduct[]>([]);
-  const { container } = useFairStyle();
+  const [orderItens, setOrderItens] = useState<IOrderItem[]>([]);
+
+  const { largeAvatar } = useMainStyle();
   const { typesSpacing } = useFairsStyle();
 
   useEffect(() => {
-    (async () => {
-      if (!!state && !!state.id) {
-        const { data, status } = await getAll(state.id);
+    if (!!pathname) {
+      const id = pathname.split("/feira/")[1];
+      (async () => {
+        const { data, status } = await getOne(id);
+        if (status !== 200) {
+          return;
+        }
+        setCurrentFair(data);
+      })();
+      (async () => {
+        const { data, status } = await getAll(id);
         if (status !== 200) {
           return;
         }
         setProducts(data);
-      }
-    })();
+      })();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [pathname]);
+
+  useEffect(() => {
+    const currentOrderItens = !!troller?.orderItens ? troller?.orderItens : [];
+    setOrderItens(currentOrderItens);
+  }, [troller]);
 
   const handleAddProduct = async (productId: string) => {
-    const findProduct = products.find(({ id }) => id === productId);
-    !!findProduct && setTrollerProducts([...trollerProducts, findProduct]);
-    const quantity =
-      trollerProducts.filter(({ id }) => id === productId).length + 1;
+    const orderItensInfo = await orderInformation(productId, +1);
 
-    const newTrollerProduct = {
-      quantity,
-      product: findProduct,
-    };
-    const newProducts = !!troller.products
-      ? [
-          ...troller.products?.filter(
-            ({ product }) => product?.id !== productId
-          ),
-          newTrollerProduct,
-        ]
-      : [newTrollerProduct];
-    const newTroller = { id: troller.id, products: newProducts };
-    // const { data, status } = await update(newTroller);
-    // if (status >= 200 && status < 300) {
-    //   setTroller(data);
-    // }
-    setTroller(newTroller);
+    if (!orderItensInfo) {
+      return;
+    }
+
+    const { filterOrderItens, newOrderItem } = orderItensInfo;
+    const newOrderItens = [...filterOrderItens, newOrderItem];
+
+    await setNewInfo(newOrderItens);
   };
 
-  const handleRemoveProduct = (productId: string) => {
-    const findProduct = products.find(({ id }) => id === productId);
-    !!findProduct && setTrollerProducts([...trollerProducts, findProduct]);
-    const quantity =
-      trollerProducts.filter(({ id }) => id === productId).length - 1;
+  const handleRemoveProduct = async (productId: string) => {
+    const orderItensInfo = await orderInformation(productId, -1);
 
-    const newTrollerProduct = {
-      quantity,
-      product: findProduct,
+    if (!orderItensInfo) {
+      return;
+    }
+
+    const { filterOrderItens, newOrderItem } = orderItensInfo;
+
+    const newOrderItens =
+      newOrderItem?.quantity <= 0
+        ? [...filterOrderItens]
+        : [...filterOrderItens, newOrderItem];
+
+    await setNewInfo(newOrderItens);
+  };
+
+  const setNewInfo = async (newOrderItens: IOrderItem[]) => {
+    setOrderItens(newOrderItens);
+    const newTroller = {
+      ...troller,
+      orderItens: newOrderItens,
+      fair: currentFair,
     };
-    const newProducts = !!troller.products
-      ? [
-          ...troller.products?.filter(
-            ({ product }) => product?.id !== productId
-          ),
-          newTrollerProduct,
-        ]
-      : [newTrollerProduct];
-    const newTroller = { id: troller.id, products: newProducts };
-    // const { data, status } = await update(newTroller);
-    // if (status <= 200 && status < 300) {
-    //   setTroller(data);
-    // }
-    setTroller(newTroller);
+    if (!troller?.id) {
+      setTroller(newTroller);
+      return;
+    }
+    const { data, status } = await update(newTroller);
+    if (status >= 300) {
+      setTroller(newTroller);
+      return;
+    }
+    setTroller(data);
+  };
+
+  const orderInformation = async (productId: string, action: number) => {
+    const foundProduct = products.find(({ id }) => id === productId);
+
+    if (!foundProduct) {
+      Swal.fire(
+        "Ops!",
+        "Ocorreu um erro enquanto removemos alguns produtos ao carrinho, por favor tente mais tarde!",
+        "error"
+      );
+      return null;
+    }
+
+    const filterOrderItens = orderItens.filter(
+      ({ product }) => !!product && product?.id !== productId
+    );
+
+    const oldOrder = orderItens.filter(
+      ({ product }) => product?.id === productId
+    )[0];
+
+    const newQuantity = !!+oldOrder?.quantity
+      ? oldOrder.quantity + action
+      : 0 + action;
+
+    const newOrderItem = !!oldOrder
+      ? {
+          ...oldOrder,
+          quantity: newQuantity,
+        }
+      : { quantity: newQuantity, product: foundProduct };
+
+    return { filterOrderItens, newOrderItem };
   };
 
   return (
-    <>
-      <Box height="40px"></Box>
-      <Container maxWidth="lg" className={container}>
+    <MainContainer>
+      {!!currentFair?.id && (
         <Box>
-          <Typography color="secondary" align="center" variant="h4">
-            {state?.name}
-          </Typography>
+          <Box>
+            <Typography color="secondary" align="center" variant="h4">
+              {currentFair?.name}
+            </Typography>
 
-          <FairRowBox>
-            {state?.types?.map((type) => {
-              return (
-                <Typography
+            <FairRowBox>
+              {currentFair?.types?.map((type) => {
+                return (
+                  <Typography
+                    color="primary"
+                    align="center"
+                    className={typesSpacing}
+                    key={`${currentFair?.id}${type}`}
+                    variant="h6"
+                  >
+                    {type}
+                  </Typography>
+                );
+              })}
+            </FairRowBox>
+          </Box>
+          <Box>
+            <SearchComponent />
+          </Box>
+          <ProductsContainer>
+            {signed && user.role === "seller" && (
+              <ProductContainer>
+                <IconButton
+                  // component={Link}
+                  // to={`cadastrar-produto/${currentFair.id}`}
                   color="primary"
-                  align="center"
-                  className={typesSpacing}
-                  key={`${state?.id}${type}`}
-                  variant="h6"
                 >
-                  {type}
-                </Typography>
-              );
-            })}
-          </FairRowBox>
+                  <Avatar
+                    alt="Product Image"
+                    src={MixedImage}
+                    // src={`../assets${`/mixed.jpg`}`}
+                    className={largeAvatar}
+                  />
+                </IconButton>
+                <InfoProductContainer>
+                  <Box className={typesSpacing}>
+                    <Typography
+                      component={Link}
+                      color="inherit"
+                      to={`/cadastrar-produto/${currentFair.id}`}
+                      variant="h6"
+                    >
+                      Adicione um novo produto
+                    </Typography>
+                  </Box>
+                </InfoProductContainer>
+              </ProductContainer>
+            )}
+            {!!products &&
+              products
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((product) => {
+                  return (
+                    <ProductComponent
+                      key={product.id}
+                      product={product}
+                      addProduct={handleAddProduct}
+                      removeProduct={handleRemoveProduct}
+                    />
+                  );
+                })}
+          </ProductsContainer>
         </Box>
-        <Box>
-          <SearchComponent />
-        </Box>
-        <ProductsContainer>
-          {!!products &&
-            products.length > 0 &&
-            products.map((product) => {
-              return (
-                <ProductComponent
-                  product={product}
-                  addProduct={handleAddProduct}
-                  removeProduct={handleRemoveProduct}
-                />
-              );
-            })}
-        </ProductsContainer>
-      </Container>
-    </>
+      )}
+    </MainContainer>
   );
 };
 

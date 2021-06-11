@@ -10,7 +10,7 @@ export const AuthContext = createContext<IContextProps>({} as IContextProps);
 interface IContextProps {
   signed: boolean;
   user: IUser;
-  login: (x: ILogin) => Promise<{ status: number }>;
+  login: (x: ILogin) => Promise<{ status: number; user?: IUser }>;
   logout: () => void;
 }
 
@@ -28,15 +28,17 @@ export const AuthProvider = (props: any) => {
       const { data, status } = await api.post("/login", loginInfo);
 
       const { token } = data;
+      localStorage.token = token;
       const currentUser: IUser = jwt_decode(token);
       setUser(currentUser);
       setSigned(true);
-      return { data, status } as {
-        data: string;
+
+      return { user: currentUser, status } as {
+        user: IUser;
         status: number;
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setSigned(false);
       Swal.fire(
         "Ops",
@@ -44,8 +46,7 @@ export const AuthProvider = (props: any) => {
         "error"
       );
       return {
-        data: loginInfo,
-        status: 400,
+        status: 401,
       };
     }
   };

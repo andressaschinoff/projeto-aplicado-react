@@ -1,5 +1,4 @@
 import Box from "@material-ui/core/Box";
-import { makeStyles, Theme } from "@material-ui/core/styles";
 import styled from "styled-components";
 const FairRowBox = styled(Box)`
   display: flex;
@@ -27,6 +26,9 @@ const ProductContainer = styled(Box)`
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  @media (max-width: 600px) {
+    padding: 20px 0 0 0;
+  }
 `;
 
 const InfoProductContainer = styled(Box)`
@@ -35,23 +37,13 @@ const InfoProductContainer = styled(Box)`
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  @media (max-width: 600px) {
+  }
 `;
-
-const useFairStyle = makeStyles((theme: Theme) => ({
-  container: {
-    padding: "30px 70px",
-    maxWidth: "80vw",
-    minHeight: "calc(100vh - 200px)",
-    marginBottom: "120px",
-    borderRadius: "20px",
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
 
 export {
   FairRowBox,
   InfoProductContainer,
   ProductsContainer,
   ProductContainer,
-  useFairStyle,
 };

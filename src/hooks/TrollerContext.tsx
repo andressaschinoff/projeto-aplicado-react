@@ -1,7 +1,6 @@
-import { useState, createContext, useEffect, useContext } from "react";
+import { useState, createContext } from "react";
 import { defaultTroller } from "../helpers/defaults";
-import AuthContext from "./AuthContext";
-import { ITroller, useTroller } from "./useTroller";
+import { ITroller } from "./useTroller";
 
 export const TrollerContext = createContext<IContexProps>({} as IContexProps);
 

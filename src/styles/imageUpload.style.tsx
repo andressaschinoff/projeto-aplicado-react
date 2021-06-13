@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 
@@ -9,7 +9,7 @@ const ImageBox = styled(Avatar)`
   padding: 16px;
 `;
 
-const useImageUploadStyle = makeStyles((theme: Theme) => ({
+const useImageUploadStyle = makeStyles(() => ({
   mainBox: {
     minWidth: "290px",
     display: "flex",

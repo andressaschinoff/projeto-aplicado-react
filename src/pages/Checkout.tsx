@@ -17,8 +17,8 @@ const Checkout: React.FC = () => {
   const { troller } = useContext(TrollerContext);
   const { checkout } = useTroller();
 
-  const handlePayment = async () => {
-    const { data, status } = await checkout(troller?.id, {});
+  const handleCheckout = async () => {
+    const { status } = await checkout(troller?.id, {});
 
     if (status >= 300) {
       Swal.fire(
@@ -50,7 +50,7 @@ const Checkout: React.FC = () => {
         </Box>
         <Box className={classes.container} />
         <Box className={classes.container} />
-        <Button variant="contained" color="primary" onClick={handlePayment}>
+        <Button variant="contained" color="primary" onClick={handleCheckout}>
           Concluir compra
         </Button>
       </CenterContainer>

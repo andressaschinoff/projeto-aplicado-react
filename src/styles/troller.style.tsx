@@ -9,10 +9,13 @@ const CenterContainer = styled(Box)`
   padding-right: 50px;
   padding-top: 20px;
   justify-content: center;
+
+  @media (max-width: 600px) {
+    padding: 20px 0 0 0;
+  }
 `;
 
 const useTrollerStyle = makeStyles((theme: Theme) => ({
-  root: {},
   fairName: {
     paddingLeft: "30px",
     fontSize: "36px",
@@ -25,12 +28,6 @@ const useTrollerStyle = makeStyles((theme: Theme) => ({
     padding: "10px 0px",
     display: "flex",
     justifyContent: "space-between",
-  },
-  productInfo: {
-    display: "flex",
-  },
-  productTextButton: {
-    color: "white",
   },
   products: {
     padding: "20px 50px",

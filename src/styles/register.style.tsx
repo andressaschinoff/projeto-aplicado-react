@@ -1,14 +1,5 @@
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
 import styled from "styled-components";
-
-const PasswordContainer = styled(Box)`
-  width: 200px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #f4f6f8;
-`;
 
 const FormContainer = styled.form`
   max-width: 80vw;
@@ -20,14 +11,15 @@ const FormContainer = styled.form`
   border-radius: 20px;
   background-color: #fff;
   overflow: auto;
+  @media (max-width: 600px) {
+    border-radius: 0;
+    max-width: 100vw;
+    min-height: calc(100vh - 124px);
+    padding: 20px 30px;
+  }
 `;
 
 const useRegisterStyle = makeStyles((theme: Theme) => ({
-  root: {
-    padding: "2px 4px",
-    alignItems: "center",
-    width: 400,
-  },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
@@ -38,9 +30,6 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
     flexDirection: "row",
   },
   labelSpace: { marginBottom: "10px", marginLeft: "10px" },
-  btwBox: {
-    margin: "2rem",
-  },
   spaceButtons: {
     marginTop: "10px",
     marginBottom: "10px",
@@ -51,6 +40,9 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
   quantity: {
     display: "flex",
     marginLeft: "20px",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+    },
     width: "100%",
   },
   value: {
@@ -58,21 +50,39 @@ const useRegisterStyle = makeStyles((theme: Theme) => ({
   },
   element: {
     marginLeft: "20px",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+    },
     width: "100%",
   },
   insideBox: {
     width: "100%",
     display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+      marginTop: "5px",
+    },
     flexDirection: "row",
   },
   radioBox: {
     width: "100%",
     display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+    },
     flexDirection: "row",
   },
   imageBox: {
     display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+    },
+  },
+  mgBottom: {
+    [theme.breakpoints.down("sm")]: {
+      marginBottom: "10px",
+    },
   },
 }));
 
-export { FormContainer, PasswordContainer, useRegisterStyle };
+export { FormContainer, useRegisterStyle };

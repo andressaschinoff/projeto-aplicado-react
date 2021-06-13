@@ -17,9 +17,7 @@ import {
 import { useMainStyle } from "../styles/main.style";
 import Box from "@material-ui/core/Box";
 
-interface Props {}
-
-const AddressComponent = forwardRef((props: Props, ref) => {
+const AddressComponent = forwardRef((_props, ref) => {
   const mainClasses = useMainStyle();
   const zipcodeRef = useRef<IZipcodeFunctions>(null);
   const [states, setStates] = React.useState<IFullAddress>(defaultFullAddress);

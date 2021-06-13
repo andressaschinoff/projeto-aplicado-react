@@ -5,7 +5,11 @@ import Typography from "@material-ui/core/Typography";
 import AuthContext from "../hooks/AuthContext";
 
 import { MainContainer, LineBreak } from "../styles/main.style";
-import { usePerfilStyle } from "../styles/perfil.style";
+import {
+  BorderBox,
+  InsideBorderBox,
+  usePerfilStyle,
+} from "../styles/perfil.style";
 import { ITroller, useTroller } from "../hooks/useTroller";
 import { roundedNumber } from "../helpers/functions";
 
@@ -57,17 +61,23 @@ const Buyer: React.FC = () => {
       <LineBreak />
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedido em aberto:</Typography>
-        {activeTrollers.map(({ id, total, fair }) => {
+        {activeTrollers.map(({ id, total, fair, orderItems }) => {
           if (total === 0) {
             return <Typography></Typography>;
           } else {
             return (
-              <Box key={id} className={classes.borderBox}>
+              <BorderBox key={id}>
                 <Typography variant="subtitle2">{fair?.name}</Typography>
-                <Typography variant="subtitle2">
-                  R$ {roundedNumber(total)}
-                </Typography>
-              </Box>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">
+                    {orderItems?.reduce((acc, curr) => acc + curr.quantity, 0)}{" "}
+                    produtos
+                  </Typography>
+                  <Typography variant="subtitle2">
+                    R$ {roundedNumber(total)}
+                  </Typography>
+                </InsideBorderBox>
+              </BorderBox>
             );
           }
         })}
@@ -75,15 +85,28 @@ const Buyer: React.FC = () => {
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedidos anteriores:</Typography>
         {inactiveTrollers.length > 0 ? (
-          inactiveTrollers.map(({ id, total, fair }) => {
-            return (
-              <Box key={id} className={classes.borderBox}>
-                <Typography variant="subtitle2">{fair?.name}</Typography>
-                <Typography variant="subtitle2">
-                  R$ {roundedNumber(total)}
-                </Typography>
-              </Box>
-            );
+          inactiveTrollers.map(({ id, total, fair, orderItems }) => {
+            if (!!fair?.name) {
+              return (
+                <BorderBox key={id}>
+                  <Typography variant="subtitle2">{fair?.name}</Typography>
+                  <InsideBorderBox>
+                    <Typography variant="subtitle1">
+                      {orderItems?.reduce(
+                        (acc, curr) => acc + curr.quantity,
+                        0
+                      )}{" "}
+                      produtos
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      R$ {roundedNumber(total)}
+                    </Typography>
+                  </InsideBorderBox>
+                </BorderBox>
+              );
+            } else {
+              return <Typography></Typography>;
+            }
           })
         ) : (
           <Typography>Você não tem nenhum pedido anterior.</Typography>

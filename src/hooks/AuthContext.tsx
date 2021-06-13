@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import { useState, createContext } from "react";
 import { baseApi } from "../services/api";
 import { IUser } from "./useUser";
 import jwt_decode from "jwt-decode";

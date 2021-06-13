@@ -11,9 +11,7 @@ import {
 } from "../styles/imageUpload.style";
 import Box from "@material-ui/core/Box";
 
-interface Props {}
-
-const ImageUpload = forwardRef((inputProps: Props, ref) => {
+const ImageUpload = forwardRef((_inputProps, ref) => {
   const [images, setImages] = React.useState([]);
   const [image, setImage] = React.useState<ImageType>();
 
@@ -21,7 +19,7 @@ const ImageUpload = forwardRef((inputProps: Props, ref) => {
 
   const onChange = (
     imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
+    _addUpdateIndex: number[] | undefined
   ) => {
     setImages(imageList as never[]);
     setImage(imageList[0]);

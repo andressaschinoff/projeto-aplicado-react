@@ -5,7 +5,12 @@ import { roundedNumber } from "../helpers/functions";
 import AuthContext from "../hooks/AuthContext";
 import { ITroller, useTroller } from "../hooks/useTroller";
 import { LineBreak, MainContainer } from "../styles/main.style";
-import { usePerfilStyle } from "../styles/perfil.style";
+import {
+  BorderBox,
+  usePerfilStyle,
+  InsideBorderBox,
+  OrderNumberBox,
+} from "../styles/perfil.style";
 
 const Seller: React.FC = () => {
   const { user, signed } = useContext(AuthContext);
@@ -43,25 +48,38 @@ const Seller: React.FC = () => {
         {activeTrollers.length > 0 ? (
           activeTrollers.map(({ id, total, user, orderItems, orderNumber }) => {
             return (
-              <Box key={id} className={classes.borderBox}>
-                <Typography variant="subtitle2">{orderNumber}</Typography>
-                <Typography variant="subtitle2">{user?.name}</Typography>
-                {!!orderItems ? (
-                  orderItems.map(({ id, quantity, product }) => {
-                    return (
-                      <Box key={id}>
-                        <Typography>{quantity}</Typography>
-                        <Typography>{product?.name}</Typography>
-                      </Box>
-                    );
-                  })
-                ) : (
-                  <Typography></Typography>
-                )}
-                <Typography variant="subtitle2">
-                  R$ {roundedNumber(total)}
-                </Typography>
-              </Box>
+              <BorderBox key={id}>
+                {/* <Box className={classes.mg}> */}
+                <OrderNumberBox>
+                  <Typography variant="subtitle1">Número do pedido:</Typography>
+                  <Typography variant="subtitle2">{orderNumber}</Typography>
+                </OrderNumberBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Cliente:</Typography>
+                  <Typography variant="subtitle2">{user?.name}</Typography>
+                </InsideBorderBox>
+                <Box className={classes.mgBtm}>
+                  <Typography variant="subtitle1">Itens:</Typography>
+                  {!!orderItems ? (
+                    orderItems.map(({ id, quantity, product }) => {
+                      return (
+                        <InsideBorderBox key={id} className={classes.mgLft}>
+                          <Typography>{quantity} x</Typography>
+                          <Typography>{product?.name}</Typography>
+                        </InsideBorderBox>
+                      );
+                    })
+                  ) : (
+                    <Typography></Typography>
+                  )}
+                </Box>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Total:</Typography>
+                  <Typography variant="subtitle1">
+                    R$ {roundedNumber(total)}
+                  </Typography>
+                </InsideBorderBox>
+              </BorderBox>
             );
           })
         ) : (
@@ -71,15 +89,24 @@ const Seller: React.FC = () => {
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedidos anteriores:</Typography>
         {inactiveTrollers.length > 0 ? (
-          inactiveTrollers.map(({ id, total, user, orderNumber }) => {
+          inactiveTrollers.map(({ id, orderNumber, user, total }) => {
             return (
-              <Box key={id} className={classes.borderBox}>
-                <Typography variant="subtitle2">{orderNumber}</Typography>
-                <Typography variant="subtitle2">{user?.name}</Typography>
-                <Typography variant="subtitle2">
-                  R$ {roundedNumber(total)}
-                </Typography>
-              </Box>
+              <BorderBox key={id}>
+                <OrderNumberBox>
+                  <Typography variant="subtitle1">Número do pedido:</Typography>
+                  <Typography variant="subtitle2">{orderNumber}</Typography>
+                </OrderNumberBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Cliente:</Typography>
+                  <Typography variant="subtitle2">{user?.name}</Typography>
+                </InsideBorderBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Total:</Typography>
+                  <Typography variant="subtitle1">
+                    R$ {roundedNumber(total)}
+                  </Typography>
+                </InsideBorderBox>
+              </BorderBox>
             );
           })
         ) : (

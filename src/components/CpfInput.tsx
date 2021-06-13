@@ -69,7 +69,7 @@ const CPFInput = forwardRef((inputProps: Props, ref) => {
   };
 
   return (
-    <FormControl error={inputProps.error} variant="outlined">
+    <FormControl fullWidth error={inputProps.error} variant="outlined">
       <FormLabel id="outlined-adornment-zipcode" component="legend">
         {inputProps.label}
       </FormLabel>

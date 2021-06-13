@@ -11,6 +11,12 @@ const MainContainer = styled(Box)`
   border-radius: 20px;
   background-color: #fff;
   overflow: auto;
+  @media (max-width: 600px) {
+    border-radius: 0;
+    max-width: 100vw;
+    min-height: calc(100vh - 124px);
+    padding: 20px 30px;
+  }
 `;
 
 const LineBreak = styled.div`
@@ -23,24 +29,37 @@ const LineBreak = styled.div`
 `;
 
 const useMainStyle = makeStyles((theme: Theme) => ({
-  root: {},
   secondaryText: {
     color: "#FFFFFF",
   },
   flexBox: {
     display: "flex",
-  },
-  addIcon: {
-    fontSize: "40px",
+
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+    },
   },
   mainContainer: {
+    maxWidth: "1280px",
     paddingTop: "40px",
     paddingBottom: "40px",
     margin: "0 auto",
+    [theme.breakpoints.down("sm")]: {
+      margin: 0,
+      padding: 0,
+      maxWidth: "100vw",
+      maxHeight: "100vh",
+    },
   },
   largeAvatar: {
     width: theme.spacing(15),
     height: theme.spacing(15),
+  },
+  mgLeft: {
+    marginLeft: "20px",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+    },
   },
 }));
 

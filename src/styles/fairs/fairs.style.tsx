@@ -1,4 +1,4 @@
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import styled from "styled-components";
 
 const FairComponentRowBox = styled(Box)`
@@ -12,10 +12,10 @@ const FairComponentRowBox = styled(Box)`
 const FairComponentMainContainer = styled(Box)`
   margin: 30px;
   padding: 20px;
-  border: 1px solid #fff;
+  border: 2px solid var(--primary-color);
   border-radius: 10px;
   @media (max-width: 600px) {
-    margin: 0;
+    margin: 30px 0px 0px 0px;
   }
 `;
 
@@ -40,7 +40,7 @@ const LandingMainContainer = styled(Box)`
   background-color: #fff;
 `;
 
-const useFairsStyle = makeStyles((theme: Theme) => ({
+const useFairsStyle = makeStyles(() => ({
   star: {
     paddingRight: "10px",
     color: "var(--star-color)",
@@ -49,9 +49,6 @@ const useFairsStyle = makeStyles((theme: Theme) => ({
   scoreStyle: {
     color: "var(--star-color)",
     paddingRight: "40px",
-  },
-  fairsMainContainer: {
-    padding: "30px",
   },
   typesSpacing: {
     paddingRight: "10px",

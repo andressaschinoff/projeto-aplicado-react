@@ -23,7 +23,6 @@ import { useFairsStyle } from "../styles/fairs/fairs.style";
 import { MainContainer, useMainStyle } from "../styles/main.style";
 
 import ProductComponent from "../components/Product.component";
-import SearchComponent from "../components/Search.component";
 import { defaultFair } from "../helpers/defaults";
 import AuthContext from "../hooks/AuthContext";
 
@@ -145,21 +144,13 @@ const Fair: React.FC = () => {
               })}
             </FairRowBox>
           </Box>
-          <Box>
-            <SearchComponent />
-          </Box>
           <ProductsContainer>
             {signed && user.role === "seller" && (
               <ProductContainer>
-                <IconButton
-                  // component={Link}
-                  // to={`cadastrar-produto/${currentFair.id}`}
-                  color="primary"
-                >
+                <IconButton color="primary">
                   <Avatar
                     alt="Product Image"
                     src={MixedImage}
-                    // src={`../assets${`/mixed.jpg`}`}
                     className={largeAvatar}
                   />
                 </IconButton>

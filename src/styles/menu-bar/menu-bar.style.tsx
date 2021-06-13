@@ -1,10 +1,9 @@
-import { makeStyles, Theme } from "@material-ui/core";
 import styled from "styled-components";
 
 const MenuHeader = styled.header`
   width: 100%;
   display: grid;
-  grid-template-columns: 250px auto;
+  grid-template-columns: 220px auto;
   padding: 10px;
 `;
 
@@ -26,15 +25,9 @@ const MenuImg = styled.img`
   height: 100px;
 `;
 
-const useMenuStyle = makeStyles((theme: Theme) => ({
-  // linkOutline: {
-  //   textDecoration: "none",
-  //   color: theme.palette.primary.main,
-  // },
-  // linkDefault: {
-  //   textDecoration: "none",
-  //   color: theme.palette.grey[900],
-  // },
-}));
+const MainTitle = styled.h5`
+  font-family: "Lobster", cursive;
+  font-size: 32px;
+`;
 
-export { LogoSection, MenuHeader, MenuImg, MenuSection, useMenuStyle };
+export { LogoSection, MenuHeader, MenuImg, MenuSection, MainTitle };

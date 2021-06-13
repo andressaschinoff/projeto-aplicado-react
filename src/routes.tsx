@@ -20,14 +20,10 @@ export default function Routes() {
       <Route path="/registrar" component={UserRegister} />
       <Route path="/feira/:id" component={Fair} />
       <BuyerRoute path="/perfil">
-        {/* <Route path="/perfil"> */}
         <Buyer />
-        {/* </Route> */}
       </BuyerRoute>
       <SellerRoute path="/area-do-vendedor">
-        {/* <Route path="/area-do-vendedor"> */}
         <Seller />
-        {/* </Route> */}
       </SellerRoute>
       <SellerRoute path="/cadastrar-feira">
         <FairRegister />

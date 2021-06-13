@@ -3,17 +3,14 @@ import { useHistory, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
-import Typography from "@material-ui/core/Typography";
 
 import {
   IProductState,
@@ -28,7 +25,6 @@ import {
 } from "../helpers/defaults";
 
 import { FormContainer, useRegisterStyle } from "../styles/register.style";
-import { useMainStyle } from "../styles/main.style";
 
 import { useTypes } from "../hooks/useTypes";
 import { IProductCreate, useProduct } from "../hooks/useProduct";
@@ -60,16 +56,7 @@ export function ProductRegister() {
   useEffect(() => {
     const id = pathname.split("/cadastrar-produto/")[1];
     setFairId(id);
-    //   const currentId = pathname.split("/cadastrar-produto/")[1];
-    //   (async () => {
-    //     const { data, status } = await getOne(currentId);
-    //     if (status !== 200) {
-    //       return;
-    //     }
-    //     setStates({ ...states, fair: data });
-    //   })();
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   const handleChange =
     (prop: keyof IProductState) =>
@@ -352,7 +339,7 @@ export function ProductRegister() {
         <Box className={classes.insideBox}>
           <Button
             onClick={createProduct}
-            className={classes.element}
+            className={`${classes.element} ${classes.mgBottom}`}
             variant="outlined"
             color="primary"
           >
@@ -366,7 +353,7 @@ export function ProductRegister() {
         <Box className={classes.insideBox}></Box>
         <Box className={classes.insideBox}>
           <Button
-            className={classes.element}
+            className={`${classes.element} ${classes.mgBottom}`}
             onClick={handleGoBack}
             variant="contained"
             color="secondary"

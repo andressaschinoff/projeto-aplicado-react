@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";

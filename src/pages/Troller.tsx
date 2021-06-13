@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
@@ -60,7 +60,7 @@ export default function Troller(props: Props) {
             {!!troller?.orderItems &&
               !!troller.orderItems[0]?.product &&
               troller?.orderItems
-                // .sort((a, b) => a.product?.name.localeCompare(b.product?.name))
+                .sort((a, b) => a.quantity - b.quantity)
                 .map(({ quantity, product, total }) => {
                   return (
                     <Box className={classes.elements}>

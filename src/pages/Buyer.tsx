@@ -21,6 +21,7 @@ const Buyer: React.FC = () => {
       (async () => {
         const { data } = await getAllbyUser(user);
         setActiveTrollers(data.actives);
+        console.log(data.actives);
         setInactiveTrollers(data.inactives);
       })();
     }

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
@@ -10,14 +10,25 @@ import { CenterContainer, useTrollerStyle } from "../styles/troller.style";
 import { roundedNumber } from "../helpers/functions";
 import Button from "@material-ui/core/Button";
 import AuthContext from "../hooks/AuthContext";
+import { useTroller } from "../hooks/useTroller";
 
 interface Props {}
 
 export default function Troller(props: Props) {
   const history = useHistory();
-  const { troller, setIsCheckout } = useContext(TrollerContext);
-  const { signed } = useContext(AuthContext);
+  const { troller, setIsCheckout, setTroller } = useContext(TrollerContext);
+  const { signed, user } = useContext(AuthContext);
+  const { getActive } = useTroller();
   const classes = useTrollerStyle();
+
+  useEffect(() => {
+    const id = signed ? user.id : null;
+    (async () => {
+      const { data } = await getActive(id);
+      setTroller(data);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signed, user, troller.active]);
 
   const handleCheckout = () => {
     setIsCheckout(true);

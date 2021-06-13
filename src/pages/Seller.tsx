@@ -46,15 +46,18 @@ const Seller: React.FC = () => {
               <Box key={id} className={classes.borderBox}>
                 <Typography variant="subtitle2">{orderNumber}</Typography>
                 <Typography variant="subtitle2">{user?.name}</Typography>
-                {!!orderItems &&
+                {!!orderItems ? (
                   orderItems.map(({ id, quantity, product }) => {
                     return (
                       <Box key={id}>
                         <Typography>{quantity}</Typography>
-                        <Typography>{product}</Typography>
+                        <Typography>{product?.name}</Typography>
                       </Box>
                     );
-                  })}
+                  })
+                ) : (
+                  <Typography></Typography>
+                )}
                 <Typography variant="subtitle2">
                   R$ {roundedNumber(total)}
                 </Typography>

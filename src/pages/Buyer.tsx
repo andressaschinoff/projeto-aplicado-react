@@ -11,7 +11,7 @@ import { roundedNumber } from "../helpers/functions";
 
 const Buyer: React.FC = () => {
   const { user, signed } = useContext(AuthContext);
-  const { getAll } = useTroller();
+  const { getAllbyUser } = useTroller();
   const classes = usePerfilStyle();
   const [activeTrollers, setActiveTrollers] = useState<ITroller[]>([]);
   const [inactiveTrollers, setInactiveTrollers] = useState<ITroller[]>([]);
@@ -19,7 +19,7 @@ const Buyer: React.FC = () => {
   useEffect(() => {
     if (signed && !!user) {
       (async () => {
-        const { data } = await getAll(user);
+        const { data } = await getAllbyUser(user);
         setActiveTrollers(data.actives);
         setInactiveTrollers(data.inactives);
       })();
@@ -57,28 +57,36 @@ const Buyer: React.FC = () => {
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedido em aberto:</Typography>
         {activeTrollers.map(({ id, total, fair }) => {
-          return (
-            <Box key={id} className={classes.borderBox}>
-              <Typography variant="subtitle2">{fair?.name}</Typography>
-              <Typography variant="subtitle2">
-                R$ {roundedNumber(total)}
-              </Typography>
-            </Box>
-          );
+          if (total === 0) {
+            return <Typography></Typography>;
+          } else {
+            return (
+              <Box key={id} className={classes.borderBox}>
+                <Typography variant="subtitle2">{fair?.name}</Typography>
+                <Typography variant="subtitle2">
+                  R$ {roundedNumber(total)}
+                </Typography>
+              </Box>
+            );
+          }
         })}
       </Box>
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedidos anteriores:</Typography>
-        {inactiveTrollers.map(({ id, total, fair }) => {
-          return (
-            <Box key={id} className={classes.borderBox}>
-              <Typography variant="subtitle2">{fair?.name}</Typography>
-              <Typography variant="subtitle2">
-                R$ {roundedNumber(total)}
-              </Typography>
-            </Box>
-          );
-        })}
+        {inactiveTrollers.length > 0 ? (
+          inactiveTrollers.map(({ id, total, fair }) => {
+            return (
+              <Box key={id} className={classes.borderBox}>
+                <Typography variant="subtitle2">{fair?.name}</Typography>
+                <Typography variant="subtitle2">
+                  R$ {roundedNumber(total)}
+                </Typography>
+              </Box>
+            );
+          })
+        ) : (
+          <Typography>Você não tem nenhum pedido anterior.</Typography>
+        )}
       </Box>
     </MainContainer>
   );

@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const token = localStorage.token;
-// const { token } = ;
-// const { token } = useContext(AuthContext);
+const baseURL = "http://localhost:3001/api";
 
-export const baseURL = "http://localhost:3001/api";
+// const useToken = () => {
+//   const { token } = useContext(AuthContext);
+//   return token;
+// };
 
-const api = axios.create({
+const baseApi = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-type": "application/json",
@@ -14,12 +15,16 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const imageApi = axios.create({
-  baseURL: "http://localhost:3001/api/image",
+// const bearerToken = !!useToken ? `Bearer ${useToken}` : "";
+// console.log(bearerToken);
+
+// baseApi.defaults.headers.authorization = bearerToken;
+
+const imageApi = axios.create({
+  baseURL: `${baseURL}/image`,
+  headers: {
+    "Content-Type": `multipart/form-data`,
+  },
 });
 
-// api.defaults.headers.authorization = !!token ? `Bearer ${token}` : "";
-
-export { api };
-
-export default api;
+export { baseApi, imageApi, baseURL };

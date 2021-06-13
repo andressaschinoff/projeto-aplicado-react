@@ -1,5 +1,4 @@
-import { Home } from "@material-ui/icons";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import AuthContext from "./hooks/AuthContext";
 import Buyer from "./pages/Buyer";

@@ -38,7 +38,6 @@ const Fair: React.FC = () => {
 
   const [currentFair, setCurrentFair] = useState<IFair>(defaultFair);
   const [products, setProducts] = useState<IProduct[]>([]);
-  const [orderItens, setOrderItens] = useState<IOrderItem[]>([]);
 
   const { largeAvatar } = useMainStyle();
   const { typesSpacing } = useFairsStyle();
@@ -64,46 +63,32 @@ const Fair: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  useEffect(() => {
-    const currentOrderItens = !!troller?.orderItens ? troller?.orderItens : [];
-    setOrderItens(currentOrderItens);
-  }, [troller]);
-
   const handleAddProduct = async (productId: string) => {
-    const orderItensInfo = await orderInformation(productId, +1);
+    const orderItensInfo = await handleOrderItem(productId, +1);
 
     if (!orderItensInfo) {
       return;
     }
 
-    const { filterOrderItens, newOrderItem } = orderItensInfo;
-    const newOrderItens = [...filterOrderItens, newOrderItem];
-
-    await setNewInfo(newOrderItens);
+    const newOrderItens = orderItensInfo;
+    await sendTroller(newOrderItens);
   };
 
   const handleRemoveProduct = async (productId: string) => {
-    const orderItensInfo = await orderInformation(productId, -1);
+    const orderItensInfo = await handleOrderItem(productId, -1);
 
     if (!orderItensInfo) {
       return;
     }
 
-    const { filterOrderItens, newOrderItem } = orderItensInfo;
-
-    const newOrderItens =
-      newOrderItem?.quantity <= 0
-        ? [...filterOrderItens]
-        : [...filterOrderItens, newOrderItem];
-
-    await setNewInfo(newOrderItens);
+    const newOrderItens = orderItensInfo;
+    await sendTroller(newOrderItens);
   };
 
-  const setNewInfo = async (newOrderItens: IOrderItem[]) => {
-    setOrderItens(newOrderItens);
+  const sendTroller = async (newOrderItens: IOrderItem[]) => {
     const newTroller = {
       ...troller,
-      orderItens: newOrderItens,
+      orderItems: newOrderItens,
       fair: currentFair,
     };
     if (!troller?.id) {
@@ -118,7 +103,7 @@ const Fair: React.FC = () => {
     setTroller(data);
   };
 
-  const orderInformation = async (productId: string, action: number) => {
+  const handleOrderItem = async (productId: string, action: number) => {
     const foundProduct = products.find(({ id }) => id === productId);
 
     if (!foundProduct) {
@@ -130,26 +115,9 @@ const Fair: React.FC = () => {
       return null;
     }
 
-    const filterOrderItens = orderItens.filter(
-      ({ product }) => !!product && product?.id !== productId
-    );
+    const newOrderItem = { quantity: action, product: foundProduct };
 
-    const oldOrder = orderItens.filter(
-      ({ product }) => product?.id === productId
-    )[0];
-
-    const newQuantity = !!+oldOrder?.quantity
-      ? oldOrder.quantity + action
-      : 0 + action;
-
-    const newOrderItem = !!oldOrder
-      ? {
-          ...oldOrder,
-          quantity: newQuantity,
-        }
-      : { quantity: newQuantity, product: foundProduct };
-
-    return { filterOrderItens, newOrderItem };
+    return [newOrderItem];
   };
 
   return (

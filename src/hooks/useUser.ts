@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { defaultUser } from "../helpers/defaults";
-import { api } from "../services/api";
+import { baseApi } from "../services/api";
 import { IFair } from "./useFair";
 import { ITroller } from "./useTroller";
 
@@ -24,7 +24,7 @@ export interface IUser extends IUserCreate {
 const useUser = () => {
   const create = async (user: IUserCreate) => {
     try {
-      const { data, status } = await api.post("/user/", user);
+      const { data, status } = await baseApi.post("/user/", user);
 
       return { data, status } as {
         data: IUser[];

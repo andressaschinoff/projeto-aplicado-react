@@ -112,7 +112,7 @@ export interface ILoginState {
 export interface ITrollerState {
   id: string;
   active: boolean;
-  orderItens: IOrderItem[];
+  orderItems: IOrderItem[];
   user?: IUser;
   total: number;
 }

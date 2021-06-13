@@ -46,9 +46,9 @@ export default function Troller(props: Props) {
           <LineBreak />
           <Box className={classes.products}>
             <Typography className={classes.text}>Produtos</Typography>
-            {!!troller?.orderItens &&
-              !!troller.orderItens[0]?.product &&
-              troller?.orderItens
+            {!!troller?.orderItems &&
+              !!troller.orderItems[0]?.product &&
+              troller?.orderItems
                 // .sort((a, b) => a.product?.name.localeCompare(b.product?.name))
                 .map(({ quantity, product, total }) => {
                   return (
@@ -64,14 +64,14 @@ export default function Troller(props: Props) {
               className={classes.link}
               component={RouterLink}
               to={
-                !!troller?.orderItens && !!troller.orderItens[0]?.product
+                !!troller?.orderItems && !!troller.orderItems[0]?.product
                   ? `/feira/${troller?.fair?.id}`
                   : "/"
               }
               color="error"
               variant="body1"
             >
-              {!!troller?.orderItens && !!troller.orderItens[0]?.product
+              {!!troller?.orderItems && !!troller.orderItems[0]?.product
                 ? "Adicionar mais produtos"
                 : "Adicionar produtos"}
             </Link>

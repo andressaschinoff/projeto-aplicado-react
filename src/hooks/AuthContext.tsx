@@ -1,5 +1,5 @@
 import React, { useState, createContext } from "react";
-import api from "../services/api";
+import { baseApi } from "../services/api";
 import { IUser } from "./useUser";
 import jwt_decode from "jwt-decode";
 import { defaultUser } from "../helpers/defaults";
@@ -9,6 +9,7 @@ export const AuthContext = createContext<IContextProps>({} as IContextProps);
 
 interface IContextProps {
   signed: boolean;
+  token: string;
   user: IUser;
   login: (x: ILogin) => Promise<{ status: number; user?: IUser }>;
   logout: () => void;
@@ -22,12 +23,14 @@ export interface ILogin {
 export const AuthProvider = (props: any) => {
   const [signed, setSigned] = useState(false);
   const [user, setUser] = useState<IUser>(defaultUser);
+  const [token, setToken] = useState("");
 
   const login = async (loginInfo: ILogin) => {
     try {
-      const { data, status } = await api.post("/login", loginInfo);
+      const { data, status } = await baseApi.post("/login", loginInfo);
 
       const { token } = data;
+      setToken(token);
       localStorage.token = token;
       const currentUser: IUser = jwt_decode(token);
       setUser(currentUser);
@@ -52,7 +55,7 @@ export const AuthProvider = (props: any) => {
   };
 
   const logout = () => {
-    api.get("/login/logout");
+    baseApi.get("/login/logout");
     setUser(defaultUser);
     setSigned(false);
   };
@@ -61,6 +64,7 @@ export const AuthProvider = (props: any) => {
     <AuthContext.Provider
       value={{
         signed,
+        token,
         user,
         login,
         logout,

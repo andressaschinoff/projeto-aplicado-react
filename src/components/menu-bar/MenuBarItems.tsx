@@ -6,6 +6,8 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import {
   MenuItemsHeader,
   MenuItemsOptions,
+  ItemsNumber,
+  BoxItemsNumber,
 } from "../../styles/menu-bar/menu-items.style";
 
 import TrollerContext from "../../hooks/TrollerContext";
@@ -90,9 +92,9 @@ export function MenuItems() {
       <IconButton component={Link} to="/carrinho" color="primary">
         <ShoppingCartIcon fontSize="large" color="primary" />
         {quantities > 0 && (
-          <Typography variant="body2" color="error">
-            {quantities}
-          </Typography>
+          <BoxItemsNumber>
+            <ItemsNumber>{quantities}</ItemsNumber>
+          </BoxItemsNumber>
         )}
       </IconButton>
     </MenuItemsHeader>

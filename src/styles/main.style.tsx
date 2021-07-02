@@ -5,8 +5,9 @@ import Box from "@material-ui/core/Box";
 const MainContainer = styled(Box)`
   max-width: 80vw;
   display: flex;
+  margin: 0 auto;
   flex-direction: column;
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 220px);
   padding: 30px 70px;
   border-radius: 20px;
   background-color: #fff;
@@ -52,8 +53,8 @@ const useMainStyle = makeStyles((theme: Theme) => ({
     },
   },
   largeAvatar: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
+    width: theme.spacing(12),
+    height: theme.spacing(12),
   },
   mgLeft: {
     marginLeft: "20px",

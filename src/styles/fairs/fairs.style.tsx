@@ -53,6 +53,9 @@ const useFairsStyle = makeStyles(() => ({
   typesSpacing: {
     paddingRight: "10px",
   },
+  icons: {
+    fontSize: 28,
+  },
 }));
 
 export {

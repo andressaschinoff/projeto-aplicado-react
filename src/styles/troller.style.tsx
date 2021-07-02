@@ -18,8 +18,11 @@ const CenterContainer = styled(Box)`
 const useTrollerStyle = makeStyles((theme: Theme) => ({
   fairName: {
     paddingLeft: "30px",
-    fontSize: "36px",
+    fontSize: "32px",
     fontFamily: "Jost",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "26px",
+    },
   },
   link: {
     fontWeight: "bold",
@@ -47,6 +50,15 @@ const useTrollerStyle = makeStyles((theme: Theme) => ({
   avatar: {
     width: "60px",
     height: "60px",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
+  },
+  noContent: {
+    minHeight: "calc(100vh - 300px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
 

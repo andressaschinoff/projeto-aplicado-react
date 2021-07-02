@@ -6,7 +6,7 @@ const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 220px);
   padding: 30px 70px;
   border-radius: 20px;
   background-color: #fff;

@@ -1,5 +1,6 @@
 import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
+import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import { IFair } from "../hooks/useFair";
 import {
   FairComponentMainContainer,
@@ -29,7 +30,12 @@ export function FairListComponent({ fair, onFairSelected }: Props) {
           </Typography>
         </FairComponentRowBox>
         <FairComponentRowBox>
-          <Typography color="secondary" variant="h6">
+          <LocalShippingIcon color="secondary" />
+          <Typography
+            style={{ marginLeft: "10px" }}
+            color="secondary"
+            variant="h6"
+          >
             <b>R$ {deliveryPrice}</b>
           </Typography>
         </FairComponentRowBox>

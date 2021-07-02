@@ -2,7 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Drawer, Typography } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
-import { MenuDrawerContainer } from "../../styles/menu-bar/menu-drawer.style";
+import {
+  MenuDrawerContainer,
+  ItemsNumber,
+  BoxItemsNumber,
+} from "../../styles/menu-bar/menu-drawer.style";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import TrollerContext from "../../hooks/TrollerContext";
@@ -95,9 +99,9 @@ function MenuDrawer(props: Props) {
         >
           <ShoppingCartIcon fontSize="large" color="primary" />
           {quantities > 0 && (
-            <Typography variant="body2" color="error">
-              {quantities}
-            </Typography>
+            <BoxItemsNumber>
+              <ItemsNumber>{quantities}</ItemsNumber>
+            </BoxItemsNumber>
           )}
         </IconButton>
       </MenuDrawerContainer>

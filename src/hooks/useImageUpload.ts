@@ -16,13 +16,8 @@ const useImageUpload = () => {
       if (!!imageFile.file) {
         const formData = new FormData();
         formData.append("image", imageFile.file, imageFile.file?.name);
-        // formData.append("type", type);
 
-        const { data, status } = await imageApi.post("/", formData, {
-          headers: {
-            "Content-Type": `multipart/form-data`,
-          },
-        });
+        const { data, status } = await imageApi.post("/", formData);
 
         return { data, status } as {
           data: IImageUpload;

@@ -1,11 +1,11 @@
-import api from "../services/api";
+import { baseApi } from "../services/api";
 import { IUser } from "./useUser";
 import { IProduct } from "./useProduct";
 import { defaultTroller } from "../helpers/defaults";
 import { IFair } from "./useFair";
 
 export interface ITrollerCreate {
-  orderItens?: IOrderItem[];
+  orderItems?: IOrderItem[];
   user?: IUser;
 }
 
@@ -35,7 +35,7 @@ const useTroller = () => {
   const create = async (user: IUser) => {
     try {
       const troller: ITrollerCreate = { user: user };
-      const { data, status } = await api.post("/troller", troller);
+      const { data, status } = await baseApi.post("/troller", troller);
 
       return { data, status } as {
         data: ITroller;
@@ -52,7 +52,7 @@ const useTroller = () => {
 
   const checkout = async (id: string, paymentInfo: {}) => {
     try {
-      const { data, status } = await api.post(
+      const { data, status } = await baseApi.post(
         `/troller/checkout/${id}`,
         paymentInfo
       );
@@ -66,7 +66,7 @@ const useTroller = () => {
 
   const update = async (troller: ITroller) => {
     try {
-      const { data, status } = await api.put(
+      const { data, status } = await baseApi.put(
         `/troller/${troller?.id}`,
         troller
       );
@@ -86,7 +86,7 @@ const useTroller = () => {
 
   const getOne = async (id: string) => {
     try {
-      const { data, status } = await api.get(`/troller/${id}`);
+      const { data, status } = await baseApi.get(`/troller/${id}`);
 
       return { data, status } as {
         data: ITroller;
@@ -98,11 +98,9 @@ const useTroller = () => {
     }
   };
 
-  const getAll = async (user: IUser) => {
+  const getAllbyUser = async (user: IUser) => {
     try {
-      const { data, status } = await api.get(
-        `/troller/user/${user.role}/${user.id}`
-      );
+      const { data, status } = await baseApi.get(`/troller/all/${user.id}`);
 
       return { data, status } as {
         data: IGetAll;
@@ -119,7 +117,8 @@ const useTroller = () => {
 
   const getActive = async (userId: string | null) => {
     try {
-      const { data, status } = await api.get(`/troller/active?id=${userId}`);
+      const url = "/troller/active" + (!!userId ? `?id=${userId}` : "");
+      const { data, status } = await baseApi.get(url);
 
       return { data, status } as {
         data: ITroller;
@@ -138,7 +137,7 @@ const useTroller = () => {
     create,
     update,
     getActive,
-    getAll,
+    getAllbyUser,
     getOne,
     checkout,
   };

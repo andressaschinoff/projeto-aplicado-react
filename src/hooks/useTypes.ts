@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
+import { baseApi } from "../services/api";
 
 const useTypes = () => {
   const backupTypes = [
@@ -21,7 +21,7 @@ const useTypes = () => {
 
   const get = async () => {
     try {
-      const { data } = await api.get("/type");
+      const { data } = await baseApi.get("/type");
 
       setTypes(data);
     } catch (error) {

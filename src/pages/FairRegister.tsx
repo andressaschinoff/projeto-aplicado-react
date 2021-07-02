@@ -1,20 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import IconButton from "@material-ui/core/IconButton";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormGroup,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
+import Typography from "@material-ui/core/Typography";
 
 import {
   IAddressFunctions,
@@ -29,11 +23,7 @@ import {
   weekdays,
 } from "../helpers/defaults";
 
-import {
-  FormContainer,
-  PasswordContainer,
-  useRegisterStyle,
-} from "../styles/register.style";
+import { FormContainer, useRegisterStyle } from "../styles/register.style";
 import { useMainStyle } from "../styles/main.style";
 
 import AddressComponent from "../components/Address.component";
@@ -162,6 +152,7 @@ export function FairRegister() {
             Abertura
           </FormLabel>
           <OutlinedInput
+            fullWidth
             id="time-opening"
             type="time"
             value={states.opening}
@@ -170,7 +161,7 @@ export function FairRegister() {
             aria-describedby="user-opening-register"
             labelWidth={0}
             inputProps={{
-              step: 300, // 5 min
+              step: 300,
               "aria-label": "opening",
             }}
           />
@@ -181,6 +172,7 @@ export function FairRegister() {
             Enceramento
           </FormLabel>
           <OutlinedInput
+            fullWidth
             id="time-closing"
             type="time"
             value={states.closing}
@@ -189,7 +181,7 @@ export function FairRegister() {
             aria-describedby="user-closing-register"
             labelWidth={0}
             inputProps={{
-              step: 300, // 5 min
+              step: 300,
               "aria-label": "opening",
             }}
           />

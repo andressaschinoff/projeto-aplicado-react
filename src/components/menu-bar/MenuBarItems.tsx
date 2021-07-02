@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
@@ -6,6 +6,8 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import {
   MenuItemsHeader,
   MenuItemsOptions,
+  ItemsNumber,
+  BoxItemsNumber,
 } from "../../styles/menu-bar/menu-items.style";
 
 import TrollerContext from "../../hooks/TrollerContext";
@@ -19,8 +21,8 @@ export function MenuItems() {
 
   useEffect(() => {
     const quantity =
-      !!troller && !!troller.orderItens
-        ? troller.orderItens?.reduce((acc, curr) => acc + curr.quantity, 0)
+      !!troller && !!troller.orderItems
+        ? troller.orderItems?.reduce((acc, curr) => acc + curr.quantity, 0)
         : 0;
     setQuantities(quantity);
   }, [troller]);
@@ -90,9 +92,9 @@ export function MenuItems() {
       <IconButton component={Link} to="/carrinho" color="primary">
         <ShoppingCartIcon fontSize="large" color="primary" />
         {quantities > 0 && (
-          <Typography variant="body2" color="error">
-            {quantities}
-          </Typography>
+          <BoxItemsNumber>
+            <ItemsNumber>{quantities}</ItemsNumber>
+          </BoxItemsNumber>
         )}
       </IconButton>
     </MenuItemsHeader>

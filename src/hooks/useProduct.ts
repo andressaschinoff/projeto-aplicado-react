@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { defaultProduct } from "../helpers/defaults";
-import { api } from "../services/api";
+import { baseApi } from "../services/api";
 import { IFair } from "./useFair";
 
 export interface IProductCreate {
@@ -19,9 +19,9 @@ export interface IProduct extends IProductCreate {
 }
 
 const useProduct = () => {
-  const getAll = async (fairId: string) => {
+  const getAllByFair = async (fairId: string) => {
     try {
-      const { data, status } = await api.get(`/product/${fairId}`);
+      const { data, status } = await baseApi.get(`/product/${fairId}`);
 
       return { data, status } as {
         data: IProduct[];
@@ -38,7 +38,7 @@ const useProduct = () => {
 
   const create = async (product: IProductCreate) => {
     try {
-      const { data, status } = await api.post("/product", product);
+      const { data, status } = await baseApi.post("/product", product);
 
       return { data, status } as {
         data: IProduct;
@@ -58,7 +58,7 @@ const useProduct = () => {
     }
   };
 
-  return { getAll, create };
+  return { getAll: getAllByFair, create };
 };
 
 export { useProduct };

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router";
 
 import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormLabel from "@material-ui/core/FormLabel";
@@ -29,7 +28,7 @@ export default function Login() {
   const { secondaryText } = useMainStyle();
 
   const { login } = useContext(AuthContext);
-  const { isCheckout, troller } = useContext(TrollerContext);
+  const { isCheckout, troller, setTroller } = useContext(TrollerContext);
 
   const { update } = useTroller();
 
@@ -61,7 +60,17 @@ export default function Login() {
 
     setStates(defaultLogin);
     if (isCheckout) {
-      await update({ ...troller, user });
+      const { data, status } = await update({ ...troller, user });
+
+      if (status >= 300) {
+        Swal.fire(
+          "Ops",
+          "Ocorreu algum erro com seu carrinho, por favor tente de novo!",
+          "error"
+        );
+      }
+
+      setTroller(data);
       history.push("/compra");
     } else if (user.role === "seller") {
       history.push("/area-do-vendedor");

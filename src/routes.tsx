@@ -1,5 +1,4 @@
-import { Home } from "@material-ui/icons";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import AuthContext from "./hooks/AuthContext";
 import Buyer from "./pages/Buyer";
@@ -20,16 +19,12 @@ export default function Routes() {
       <Route path="/carrinho" component={Troller} />
       <Route path="/registrar" component={UserRegister} />
       <Route path="/feira/:id" component={Fair} />
-      {/* <BuyerRoute path="/perfil"> */}
-      <Route path="/perfil">
+      <BuyerRoute path="/perfil">
         <Buyer />
-      </Route>
-      {/* </BuyerRoute> */}
-      {/* <SellerRoute path="/area-do-vendedor"> */}
-      <Route path="/area-do-vendedor">
+      </BuyerRoute>
+      <SellerRoute path="/area-do-vendedor">
         <Seller />
-      </Route>
-      {/* </SellerRoute> */}
+      </SellerRoute>
       <SellerRoute path="/cadastrar-feira">
         <FairRegister />
       </SellerRoute>

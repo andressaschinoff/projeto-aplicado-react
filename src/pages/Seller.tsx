@@ -5,20 +5,27 @@ import { roundedNumber } from "../helpers/functions";
 import AuthContext from "../hooks/AuthContext";
 import { ITroller, useTroller } from "../hooks/useTroller";
 import { LineBreak, MainContainer } from "../styles/main.style";
-import { usePerfilStyle } from "../styles/perfil.style";
+import {
+  BorderBox,
+  usePerfilStyle,
+  InsideBorderBox,
+  OrderNumberBox,
+} from "../styles/perfil.style";
 
 const Seller: React.FC = () => {
   const { user, signed } = useContext(AuthContext);
-  const { getAll } = useTroller();
+  const { getAllbyUser } = useTroller();
   const classes = usePerfilStyle();
 
   const [activeTrollers, setActiveTrollers] = useState<ITroller[]>([]);
   const [inactiveTrollers, setInactiveTrollers] = useState<ITroller[]>([]);
 
   useEffect(() => {
+    console.log(user);
     if (signed && !!user) {
       (async () => {
-        const { data } = await getAll(user);
+        const { data } = await getAllbyUser(user);
+        console.log(data);
         setActiveTrollers(data.actives);
         setInactiveTrollers(data.inactives);
       })();
@@ -38,40 +45,73 @@ const Seller: React.FC = () => {
       <LineBreak />
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedido em aberto:</Typography>
-        {activeTrollers.map(({ id, total, user, orderItens, orderNumber }) => {
-          return (
-            <Box key={id} className={classes.borderBox}>
-              <Typography variant="subtitle2">{orderNumber}</Typography>
-              <Typography variant="subtitle2">{user?.name}</Typography>
-              {!!orderItens &&
-                orderItens.map(({ id, quantity, product }) => {
-                  return (
-                    <Box key={id}>
-                      <Typography>{quantity}</Typography>
-                      <Typography>{product}</Typography>
-                    </Box>
-                  );
-                })}
-              <Typography variant="subtitle2">
-                R$ {roundedNumber(total)}
-              </Typography>
-            </Box>
-          );
-        })}
+        {activeTrollers.length > 0 ? (
+          activeTrollers.map(({ id, total, user, orderItems, orderNumber }) => {
+            return (
+              <BorderBox key={id}>
+                {/* <Box className={classes.mg}> */}
+                <OrderNumberBox>
+                  <Typography variant="subtitle1">Número do pedido:</Typography>
+                  <Typography variant="subtitle2">{orderNumber}</Typography>
+                </OrderNumberBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Cliente:</Typography>
+                  <Typography variant="subtitle2">{user?.name}</Typography>
+                </InsideBorderBox>
+                <Box className={classes.mgBtm}>
+                  <Typography variant="subtitle1">Itens:</Typography>
+                  {!!orderItems ? (
+                    orderItems.map(({ id, quantity, product }) => {
+                      return (
+                        <InsideBorderBox key={id} className={classes.mgLft}>
+                          <Typography>{quantity} x</Typography>
+                          <Typography>{product?.name}</Typography>
+                        </InsideBorderBox>
+                      );
+                    })
+                  ) : (
+                    <Typography></Typography>
+                  )}
+                </Box>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Total:</Typography>
+                  <Typography variant="subtitle1">
+                    R$ {roundedNumber(total)}
+                  </Typography>
+                </InsideBorderBox>
+              </BorderBox>
+            );
+          })
+        ) : (
+          <Typography>Você não tem nenhum pedido aberto.</Typography>
+        )}
       </Box>
       <Box className={classes.container}>
         <Typography variant="subtitle1">Pedidos anteriores:</Typography>
-        {inactiveTrollers.map(({ id, total, user, orderNumber }) => {
-          return (
-            <Box key={id} className={classes.borderBox}>
-              <Typography variant="subtitle2">{orderNumber}</Typography>
-              <Typography variant="subtitle2">{user?.name}</Typography>
-              <Typography variant="subtitle2">
-                R$ {roundedNumber(total)}
-              </Typography>
-            </Box>
-          );
-        })}
+        {inactiveTrollers.length > 0 ? (
+          inactiveTrollers.map(({ id, orderNumber, user, total }) => {
+            return (
+              <BorderBox key={id}>
+                <OrderNumberBox>
+                  <Typography variant="subtitle1">Número do pedido:</Typography>
+                  <Typography variant="subtitle2">{orderNumber}</Typography>
+                </OrderNumberBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Cliente:</Typography>
+                  <Typography variant="subtitle2">{user?.name}</Typography>
+                </InsideBorderBox>
+                <InsideBorderBox>
+                  <Typography variant="subtitle1">Total:</Typography>
+                  <Typography variant="subtitle1">
+                    R$ {roundedNumber(total)}
+                  </Typography>
+                </InsideBorderBox>
+              </BorderBox>
+            );
+          })
+        ) : (
+          <Typography>Você não tem nenhum pedido anterior.</Typography>
+        )}
       </Box>
     </MainContainer>
   );

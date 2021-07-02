@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import MaskedInput from "react-text-mask";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import FormControl from "@material-ui/core/FormControl";
@@ -54,7 +54,7 @@ const ZipcodeInput = forwardRef((inputProps: Props, ref) => {
   };
 
   return (
-    <FormControl error={inputProps.error} variant="outlined">
+    <FormControl fullWidth error={inputProps.error} variant="outlined">
       <FormLabel id="outlined-adornment-zipcode" component="legend">
         {inputProps.label}
       </FormLabel>

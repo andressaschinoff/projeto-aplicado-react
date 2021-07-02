@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import MenuBar from "../components/menu-bar/MenuBar";
@@ -17,7 +16,7 @@ function Home() {
       <LandingMainContainer>
         <MenuBar />
         <LandingFairContainer>
-          <Container className={mainContainer} maxWidth="lg">
+          <Container className={mainContainer}>
             <Routes />
           </Container>
         </LandingFairContainer>

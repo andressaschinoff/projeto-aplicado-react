@@ -145,7 +145,7 @@ const defaultProductHelpers: IProductHelpers = {
 const defaultTroller: ITroller = {
   id: "",
   active: true,
-  orderItens: [{ quantity: 0 }],
+  orderItems: [{ quantity: 0 }],
   total: 0,
   subtotal: 0,
 };

@@ -41,8 +41,8 @@ const theme = createMuiTheme({
     },
     h6: {
       fontFamily: "Roboto, sans-serif",
-      fontSize: 24,
-      fontWeight: 500,
+      fontSize: 20,
+      fontWeight: 700,
     },
     subtitle1: {
       fontFamily: "Montserrat, sans-serif",
@@ -57,7 +57,12 @@ const theme = createMuiTheme({
     },
     body2: {
       fontFamily: "Montserrat, sans-serif",
-      fontSize: "10px",
+      fontSize: 16,
+      fontWeight: 500,
+    },
+    body1: {
+      fontFamily: "Montserrat, sans-serif",
+      fontSize: 16,
       fontWeight: 700,
     },
   },

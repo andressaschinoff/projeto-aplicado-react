@@ -9,14 +9,20 @@ const CenterContainer = styled(Box)`
   padding-right: 50px;
   padding-top: 20px;
   justify-content: center;
+
+  @media (max-width: 600px) {
+    padding: 20px 0 0 0;
+  }
 `;
 
 const useTrollerStyle = makeStyles((theme: Theme) => ({
-  root: {},
   fairName: {
     paddingLeft: "30px",
-    fontSize: "36px",
+    fontSize: "32px",
     fontFamily: "Jost",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "26px",
+    },
   },
   link: {
     fontWeight: "bold",
@@ -25,12 +31,6 @@ const useTrollerStyle = makeStyles((theme: Theme) => ({
     padding: "10px 0px",
     display: "flex",
     justifyContent: "space-between",
-  },
-  productInfo: {
-    display: "flex",
-  },
-  productTextButton: {
-    color: "white",
   },
   products: {
     padding: "20px 50px",
@@ -50,6 +50,15 @@ const useTrollerStyle = makeStyles((theme: Theme) => ({
   avatar: {
     width: "60px",
     height: "60px",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
+  },
+  noContent: {
+    minHeight: "calc(100vh - 300px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
 

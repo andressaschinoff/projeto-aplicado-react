@@ -1,13 +1,10 @@
-import React from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { useSearchStyle } from "../styles/search.style";
 
-interface Props {}
-
-export function SearchComponent(prop: Props) {
+export function SearchComponent() {
   const classes = useSearchStyle();
 
   return (

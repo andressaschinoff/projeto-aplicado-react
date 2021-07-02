@@ -1,6 +1,6 @@
-import React from "react";
 import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
+import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import { IFair } from "../hooks/useFair";
 import {
   FairComponentMainContainer,
@@ -19,7 +19,7 @@ export function FairListComponent({ fair, onFairSelected }: Props) {
 
   return (
     <FairComponentMainContainer onClick={() => onFairSelected(id, name)}>
-      <Typography variant="h5" color="textSecondary">
+      <Typography variant="h5" color="secondary">
         <b>{name}</b>
       </Typography>
       <FairComponentRowBox>
@@ -30,7 +30,12 @@ export function FairListComponent({ fair, onFairSelected }: Props) {
           </Typography>
         </FairComponentRowBox>
         <FairComponentRowBox>
-          <Typography color="textSecondary" variant="h6">
+          <LocalShippingIcon color="secondary" />
+          <Typography
+            style={{ marginLeft: "10px" }}
+            color="secondary"
+            variant="h6"
+          >
             <b>R$ {deliveryPrice}</b>
           </Typography>
         </FairComponentRowBox>
@@ -41,7 +46,7 @@ export function FairListComponent({ fair, onFairSelected }: Props) {
           types.map((type) => {
             return (
               <Typography
-                color="textSecondary"
+                color="secondary"
                 key={`${id}${type}`}
                 variant="h6"
                 className={typesSpacing}

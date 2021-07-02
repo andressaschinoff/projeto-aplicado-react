@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -13,7 +13,6 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 
 import {
@@ -48,7 +47,7 @@ export function UserRegister() {
   const { getAll } = useFair();
   const { create } = useUser();
   const { spaceButtons, boxSpace } = useRegisterStyle();
-  const { secondaryText, flexBox } = useMainStyle();
+  const { secondaryText, flexBox, mgLeft } = useMainStyle();
   const [fairs, setFairs] = useState<IFair[]>();
   const [filterFairs, setFilterFairs] = useState<IFair[]>();
   const [states, setStates] = useState<IUserRegisterState>(defaultUserRegister);
@@ -211,7 +210,12 @@ export function UserRegister() {
           helperText={helperTexts.cpf}
           onChange={handleChange("cpf")}
         />
-        <FormControl fullWidth error={errors.email} variant="outlined">
+        <FormControl
+          className={mgLeft}
+          fullWidth
+          error={errors.email}
+          variant="outlined"
+        >
           <FormLabel id="user-email-register" component="legend">
             Email
           </FormLabel>
@@ -254,6 +258,7 @@ export function UserRegister() {
           <FormHelperText>{helperTexts.password}</FormHelperText>
         </FormControl>
         <FormControl
+          className={mgLeft}
           fullWidth
           error={errors.reapeatPassword}
           variant="outlined"

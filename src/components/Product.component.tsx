@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
@@ -28,7 +27,7 @@ export function ProductComponent({
   removeProduct,
 }: Props) {
   const { id, name, price, type, description, unitsOfMeasure, image } = product;
-  const { typesSpacing } = useFairsStyle();
+  const { typesSpacing, icons } = useFairsStyle();
   const { largeAvatar } = useMainStyle();
 
   const currentImage = !!image ? `${baseURL}/assets/${image}` : MixedImage;
@@ -38,13 +37,13 @@ export function ProductComponent({
       <Avatar alt="Product Image" src={currentImage} className={largeAvatar} />
       <InfoProductContainer>
         <Box className={typesSpacing}>
-          <Typography variant="h5">{name}</Typography>
-          <Typography variant="h6" color="primary">
+          <Typography variant="h6">{name}</Typography>
+          <Typography variant="body1" color="primary">
             {type}
           </Typography>
           {!!description && <Typography variant="h6">{description}</Typography>}
-          <Typography variant="h6">R$ {roundedNumber(price)}</Typography>
-          <Typography variant="h6">{unitsOfMeasure}</Typography>
+          <Typography variant="body2">R$ {roundedNumber(price)}</Typography>
+          <Typography variant="body2">{unitsOfMeasure}</Typography>
         </Box>
         <Box className={typesSpacing}>
           <IconButton
@@ -52,14 +51,14 @@ export function ProductComponent({
             color="secondary"
             component="span"
           >
-            <RemoveShoppingCartIcon color="secondary" fontSize="large" />
+            <RemoveShoppingCartIcon color="secondary" className={icons} />
           </IconButton>
           <IconButton
             onClick={() => addProduct(id)}
             color="primary"
             component="span"
           >
-            <AddShoppingCartIcon color="primary" fontSize="large" />
+            <AddShoppingCartIcon color="primary" className={icons} />
           </IconButton>
         </Box>
       </InfoProductContainer>

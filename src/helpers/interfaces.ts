@@ -1,6 +1,5 @@
 import { ImageType } from "react-images-uploading";
-import { IFair, IFairCreate } from "../hooks/useFair";
-import { IFullAddress } from "../hooks/useFullAddress";
+import { IFair } from "../hooks/useFair";
 import { IProductCreate } from "../hooks/useProduct";
 import { IOrderItem } from "../hooks/useTroller";
 import { IUser, IUserCreate } from "../hooks/useUser";
@@ -112,7 +111,7 @@ export interface ILoginState {
 export interface ITrollerState {
   id: string;
   active: boolean;
-  orderItens: IOrderItem[];
+  orderItems: IOrderItem[];
   user?: IUser;
   total: number;
 }

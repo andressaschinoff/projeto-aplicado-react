@@ -1,5 +1,5 @@
 import { defaultFair } from "../helpers/defaults";
-import { api } from "../services/api";
+import { baseApi } from "../services/api";
 
 export interface IFairCreate {
   name: string;
@@ -21,7 +21,7 @@ export interface IFair extends IFairCreate {
 const useFair = () => {
   const getAll = async () => {
     try {
-      const { data, status } = await api.get("/fair");
+      const { data, status } = await baseApi.get("/fair");
 
       return { data, status } as {
         data: IFair[];
@@ -38,7 +38,7 @@ const useFair = () => {
 
   const getOne = async (id: string) => {
     try {
-      const { data, status } = await api.get(`/fair/${id}`);
+      const { data, status } = await baseApi.get(`/fair/${id}`);
 
       return { data, status } as {
         data: IFair;
@@ -55,7 +55,7 @@ const useFair = () => {
 
   const create = async (fair: IFairCreate) => {
     try {
-      const { data, status } = await api.post("/fair", fair);
+      const { data, status } = await baseApi.post("/fair", fair);
 
       return { data, status } as {
         data: IFair;
